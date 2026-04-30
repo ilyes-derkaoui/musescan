@@ -156,11 +156,11 @@
             inset: 0;
             pointer-events: none;
             background:
-                radial-gradient(circle at 50% 0%, rgba(200,168,75,0.14), transparent 44%),
+                radial-gradient(circle at 50% 0%, rgba(200,168,75,0.09), transparent 46%),
                 repeating-linear-gradient(
                     0deg,
-                    rgba(255,255,255,0.012) 0px,
-                    rgba(255,255,255,0.012) 1px,
+                    rgba(255,255,255,0.006) 0px,
+                    rgba(255,255,255,0.006) 1px,
                     transparent 1px,
                     transparent 3px
                 );
@@ -200,7 +200,7 @@
             max-width: 560px;
             padding: 0 28px;
             margin-top: 38px;
-            animation: up 1.1s ease both;
+            animation: up .7s ease both;
         }
 
         @keyframes up {
@@ -255,7 +255,7 @@
             direction: rtl;
             line-height: 1.1;
             margin-bottom: 4px;
-            text-shadow: 0 2px 30px rgba(0,0,0,0.45);
+            text-shadow: 0 2px 18px rgba(0,0,0,0.36);
         }
 
         .hero-fr {
@@ -265,7 +265,7 @@
             font-style: italic;
             color: var(--gold-lt);
             margin-bottom: 18px;
-            text-shadow: 0 0 24px rgba(200,168,75,0.25);
+            text-shadow: 0 0 12px rgba(200,168,75,0.16);
         }
 
         .hero-desc {
@@ -302,8 +302,8 @@
             padding: 18px 32px;
             border: none;
             cursor: pointer;
-            transition: all 0.22s;
-            border-radius: 0;
+            transition: all 0.18s ease;
+            border-radius: 2px;
             position: relative;
             overflow: hidden;
             min-height: 52px;
@@ -313,7 +313,7 @@
         .hbtn-gold {
             background: var(--gold);
             color: #1c1406;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.28);
         }
         .hbtn-gold:hover { background: var(--gold-lt); }
 
@@ -340,12 +340,12 @@
         .hbtn-outline {
             background: transparent;
             color: rgba(255,255,255,0.82);
-            border: 1px solid rgba(255,255,255,0.28);
+            border: 1px solid rgba(255,255,255,0.34);
         }
         .hbtn-outline:hover {
             border-color: var(--gold);
-            color: var(--gold-lt);
-            background: var(--gold-dim);
+            color: #fff;
+            background: rgba(200,168,75,0.1);
         }
 
         /* Chevron bas */
@@ -421,8 +421,153 @@
         }
 
         /* ============================================================
-           SECTION PLAN (placeholder)
+           SECTION PLAN DU MUSEE
         ============================================================ */
+        .sec-map {
+            background: var(--ivory);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23f3ecd9'/%3E%3Cpath d='M0 7h8' stroke='%23e2d6be' stroke-opacity='0.35'/%3E%3C/svg%3E");
+            border-top: 1px solid rgba(200,168,75,0.2);
+            padding: 78px clamp(18px, 6vw, 80px) 90px;
+        }
+
+        .map-wrap {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .map-head {
+            text-align: center;
+            margin-bottom: 34px;
+        }
+
+        .map-ar {
+            font-family: var(--fa);
+            font-size: clamp(24px, 4vw, 42px);
+            color: var(--ink);
+            direction: rtl;
+            margin-bottom: 8px;
+        }
+
+        .map-fr {
+            font-family: var(--fh);
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--ink-mid);
+        }
+
+        .map-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 18px;
+            align-items: stretch;
+        }
+
+        .map-board {
+            position: relative;
+            min-height: 320px;
+            border: 1px solid rgba(200,168,75,0.35);
+            background:
+                linear-gradient(180deg, rgba(200,168,75,0.035), rgba(200,168,75,0.018)),
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(28,20,6,0.04) 0px,
+                    rgba(28,20,6,0.04) 1px,
+                    transparent 1px,
+                    transparent 32px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(28,20,6,0.035) 0px,
+                    rgba(28,20,6,0.035) 1px,
+                    transparent 1px,
+                    transparent 32px
+                );
+            overflow: hidden;
+        }
+
+        .map-board::before {
+            content: "";
+            position: absolute;
+            inset: 10px;
+            border: 1px dashed rgba(200,168,75,0.35);
+            pointer-events: none;
+        }
+
+        .map-title {
+            position: absolute;
+            top: 18px;
+            left: 20px;
+            font-family: var(--ff);
+            font-style: italic;
+            font-size: 20px;
+            color: rgba(28,20,6,0.72);
+        }
+
+        .map-node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 0 4px rgba(200,168,75,0.14);
+        }
+
+        .map-node.n1 { top: 34%; left: 24%; }
+        .map-node.n2 { top: 47%; left: 56%; animation-delay: .35s; }
+        .map-node.n3 { top: 67%; left: 38%; animation-delay: .7s; }
+
+        .map-lines {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-lines path {
+            stroke: rgba(200,168,75,0.55);
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 6 8;
+        }
+
+        .map-panel {
+            border: 1px solid rgba(200,168,75,0.35);
+            background: rgba(255,255,255,0.36);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .map-panel h3 {
+            font-family: var(--ff);
+            font-size: 27px;
+            font-style: italic;
+            font-weight: 500;
+            color: var(--ink);
+            margin-bottom: 2px;
+        }
+
+        .map-level {
+            border: 1px solid rgba(200,168,75,0.28);
+            background: rgba(200,168,75,0.045);
+            color: var(--ink-mid);
+            padding: 11px 12px;
+            font-family: var(--fh);
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .map-note {
+            margin-top: 6px;
+            font-family: var(--fu);
+            font-size: 14px;
+            color: rgba(58,46,24,0.86);
+            line-height: 1.5;
+        }
         /* ============================================================
            FOOTER
         ============================================================ */
@@ -463,7 +608,7 @@
             font-style: italic;
             color: var(--muted-gold);
             margin-bottom: 26px;
-            text-shadow: 0 0 16px rgba(200,168,75,0.18);
+            text-shadow: 0 0 10px rgba(200,168,75,0.1);
         }
 
         .ftr-copy {
@@ -735,6 +880,10 @@
             .hero-chevron { bottom: 10px; }
             .sec-org { padding: 64px 18px; }
             .os-line { width: 52px; }
+            .sec-map { padding: 56px 16px 64px; }
+            .map-grid { grid-template-columns: 1fr; }
+            .map-board { min-height: 270px; }
+            .map-panel h3 { font-size: 24px; }
             .ftr { padding: 40px 18px calc(32px + env(safe-area-inset-bottom)); }
             .qr-ov {
                 align-items: flex-end;
@@ -755,8 +904,8 @@
         @media (hover: none) {
             .hbtn::before { display: none; }
             .hbtn:active {
-                transform: scale(0.985);
-                filter: brightness(0.98);
+                transform: scale(0.992);
+                filter: brightness(0.995);
             }
         }
 
@@ -1405,6 +1554,46 @@
         <p class="org-fr">Direction de l'Information et de la Communication</p>
     </div>
 
+</section>
+
+
+{{-- ────────────────────────────────────────────
+     PLAN DU MUSÉE
+──────────────────────────────────────────── --}}
+<section class="sec-map" id="sec-map">
+    <div class="map-wrap">
+        <div class="map-head">
+            <p class="map-ar">خريطة المتحف</p>
+            <p class="map-fr">Plan du Musée Central de l'Armée</p>
+        </div>
+
+        <div class="org-sep" aria-hidden="true" style="margin-top:0; margin-bottom:30px;">
+            <div class="os-line"></div>
+            <div class="os-diamond"></div>
+            <div class="os-line"></div>
+        </div>
+
+        <div class="map-grid">
+            <div class="map-board" role="img" aria-label="Carte indicative du parcours du musée">
+                <p class="map-title">Parcours principal</p>
+                <svg class="map-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M24,34 C34,30 42,36 56,47 C62,52 52,62 38,67" />
+                </svg>
+                <span class="map-node n1" aria-hidden="true"></span>
+                <span class="map-node n2" aria-hidden="true"></span>
+                <span class="map-node n3" aria-hidden="true"></span>
+            </div>
+
+            <aside class="map-panel">
+                <h3>Niveaux</h3>
+                <div class="map-level">RDC · Accueil & Expositions</div>
+                <div class="map-level">Étage 1 · Chronologie Historique</div>
+                <div class="map-level">Étage 2 · Collections Militaires</div>
+                <div class="map-level">Étage 3 · Archives & Mémoire</div>
+                <p class="map-note">Le plan détaillé interactif sera intégré ici (QR salle par salle).</p>
+            </aside>
+        </div>
+    </div>
 </section>
 
 
