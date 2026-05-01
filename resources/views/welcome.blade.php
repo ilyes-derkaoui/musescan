@@ -139,14 +139,17 @@
         ============================================================ */
         .hero {
             position: relative;
-            height: calc(var(--vh, 1vh) * 100);
-            min-height: 700px;
+            /* min-height only: fixed height + overflow:hidden was clipping the lower buttons
+               so the ivory section appeared to “cover” Administration */
+            min-height: max(700px, calc(var(--vh, 1vh) * 100));
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: visible;
             padding-top: var(--header-h);
+            padding-bottom: clamp(56px, 12vh, 140px);
             background: #051c13;
         }
 
@@ -348,6 +351,18 @@
             background: rgba(200,168,75,0.1);
         }
 
+        /* Troisième bouton : même famille, accent doré */
+        .hbtn-admin {
+            border-color: rgba(200,168,75,0.45);
+            color: var(--gold-lt);
+            letter-spacing: 0.16em;
+        }
+        .hbtn-admin:hover {
+            border-color: var(--gold);
+            color: #fff;
+            background: rgba(200,168,75,0.12);
+        }
+
         /* Chevron bas */
         .hero-chevron {
             position: absolute;
@@ -374,6 +389,8 @@
            SECTION ORGANIGRAMME (fond ivoire)
         ============================================================ */
         .sec-org {
+            position: relative;
+            z-index: 1;
             background: var(--ivory);
             /* texture légère */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='6' height='6' fill='%23f3ecd9'/%3E%3Ccircle cx='1' cy='1' r='0.6' fill='%23ddd0b8' opacity='0.35'/%3E%3C/svg%3E");
@@ -498,24 +515,12 @@
             position: absolute;
             top: 18px;
             left: 20px;
+            z-index: 4;
             font-family: var(--ff);
             font-style: italic;
             font-size: 20px;
             color: rgba(28,20,6,0.72);
         }
-
-        .map-node {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--gold);
-            box-shadow: 0 0 0 4px rgba(200,168,75,0.14);
-        }
-
-        .map-node.n1 { top: 34%; left: 24%; }
-        .map-node.n2 { top: 47%; left: 56%; animation-delay: .35s; }
-        .map-node.n3 { top: 67%; left: 38%; animation-delay: .7s; }
 
         .map-lines {
             position: absolute;
@@ -550,19 +555,124 @@
             margin-bottom: 2px;
         }
 
-        .map-level {
+        .map-panel-hint {
+            font-family: var(--fu);
+            font-size: 13px;
+            color: rgba(58,46,24,0.75);
+            margin-bottom: 12px;
+            line-height: 1.45;
+        }
+
+        .map-floor-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .map-floor-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
             border: 1px solid rgba(200,168,75,0.28);
             background: rgba(200,168,75,0.045);
             color: var(--ink-mid);
-            padding: 11px 12px;
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-family: var(--fu);
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            touch-action: manipulation;
+        }
+
+        .map-floor-btn:hover {
+            border-color: rgba(200,168,75,0.5);
+            background: rgba(200,168,75,0.09);
+        }
+
+        .map-floor-btn.active {
+            border-color: rgba(200,168,75,0.65);
+            background: rgba(200,168,75,0.12);
+            box-shadow: 0 0 0 1px rgba(200,168,75,0.2);
+        }
+
+        .map-floor-fr {
+            display: block;
             font-family: var(--fh);
-            font-size: 12px;
-            letter-spacing: 0.1em;
+            font-size: 11px;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
+            color: var(--ink);
+        }
+
+        .map-floor-ar {
+            display: block;
+            margin-top: 6px;
+            font-family: var(--fa);
+            font-size: 13px;
+            color: rgba(28,20,6,0.72);
+            direction: rtl;
+        }
+
+        .map-points-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .map-point {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+
+        .map-point-dot {
+            display: block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 0 4px rgba(200,168,75,0.14);
+            margin: 0 auto;
+        }
+
+        .map-point-label {
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: max-content;
+            max-width: 140px;
+            text-align: center;
+            padding: 5px 8px;
+            border-radius: 3px;
+            background: rgba(255,253,248,0.94);
+            border: 1px solid rgba(200,168,75,0.4);
+            box-shadow: 0 4px 12px rgba(28,20,6,0.12);
+        }
+
+        .map-point-name-ar {
+            display: block;
+            font-family: var(--fa);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--ink);
+            direction: rtl;
+            line-height: 1.25;
+        }
+
+        .map-point-name-fr {
+            display: block;
+            font-family: var(--ff);
+            font-size: 10px;
+            font-style: italic;
+            color: rgba(58,46,24,0.85);
+            margin-top: 3px;
+            line-height: 1.2;
         }
 
         .map-note {
-            margin-top: 6px;
+            margin-top: 14px;
             font-family: var(--fu);
             font-size: 14px;
             color: rgba(58,46,24,0.86);
@@ -853,6 +963,61 @@
             line-height: 1.7;
             margin-top: 10px;
         }
+
+        .qr-alt {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(200,168,75,0.12);
+        }
+        .qr-alt-lbl {
+            font-family: var(--fh);
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(200,168,75,0.45);
+            margin-bottom: 10px;
+        }
+        .qr-alt-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: stretch;
+            margin-bottom: 10px;
+        }
+        .qr-alt-row input[type="text"] {
+            flex: 1;
+            min-width: 140px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 10px 12px;
+            border: 1px solid rgba(200,168,75,0.25);
+            border-radius: 3px;
+            background: rgba(0,0,0,0.25);
+            color: rgba(255,255,255,0.88);
+        }
+        .qr-alt-btn {
+            font-family: var(--fu);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 10px 14px;
+            border-radius: 3px;
+            border: 1px solid rgba(200,168,75,0.35);
+            background: rgba(200,168,75,0.08);
+            color: var(--gold-lt);
+            cursor: pointer;
+            white-space: nowrap;
+            touch-action: manipulation;
+        }
+        .qr-alt-btn:hover { background: rgba(200,168,75,0.14); }
+        .qr-alt-btn.primary {
+            background: var(--gold);
+            color: var(--ink);
+            border-color: var(--gold);
+        }
+        .qr-alt-btn.primary:hover { background: var(--gold-lt); }
+        #qrFileInput { display: none; }
 
         /* ============================================================
            RESPONSIVE
@@ -1510,9 +1675,11 @@
                 Scanner le QR
             </button>
 
-            <button class="hbtn hbtn-outline" onclick="goTo('sec-org')" type="button">
+            <button class="hbtn hbtn-outline" onclick="goTo('sec-map')" type="button">
                 Commencer la visite
             </button>
+
+            <a class="hbtn hbtn-outline hbtn-admin" href="{{ url('/admin/artifacts') }}">Administration</a>
 
         </div>
     </div>
@@ -1574,23 +1741,36 @@
         </div>
 
         <div class="map-grid">
-            <div class="map-board" role="img" aria-label="Carte indicative du parcours du musée">
-                <p class="map-title">Parcours principal</p>
+            <div class="map-board" id="mapBoard" role="img" aria-label="Plan du parcours par niveau">
+                <p class="map-title" id="mapBoardTitle">Parcours</p>
                 <svg class="map-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                    <path d="M24,34 C34,30 42,36 56,47 C62,52 52,62 38,67" />
+                    <path id="mapRoutePath" d="M20,72 L24,38 C30,22 46,20 54,32 C60,44 50,54 64,60 C74,64 80,48 86,42" />
                 </svg>
-                <span class="map-node n1" aria-hidden="true"></span>
-                <span class="map-node n2" aria-hidden="true"></span>
-                <span class="map-node n3" aria-hidden="true"></span>
+                <div class="map-points-layer" id="mapPointsLayer"></div>
             </div>
 
             <aside class="map-panel">
                 <h3>Niveaux</h3>
-                <div class="map-level">RDC · Accueil & Expositions</div>
-                <div class="map-level">Étage 1 · Chronologie Historique</div>
-                <div class="map-level">Étage 2 · Collections Militaires</div>
-                <div class="map-level">Étage 3 · Archives & Mémoire</div>
-                <p class="map-note">Le plan détaillé interactif sera intégré ici (QR salle par salle).</p>
+                <p class="map-panel-hint">Sélectionnez un étage : le schéma à gauche et les points d’intérêt se mettent à jour.</p>
+                <div class="map-floor-btns">
+                    <button type="button" class="map-floor-btn active" data-floor="rdc" onclick="selectMuseumFloor('rdc')">
+                        <span class="map-floor-fr">RDC · Accueil & Expositions</span>
+                        <span class="map-floor-ar">الطابق الأرضي · الاستقبال والمعارض</span>
+                    </button>
+                    <button type="button" class="map-floor-btn" data-floor="e1" onclick="selectMuseumFloor('e1')">
+                        <span class="map-floor-fr">Étage 1 · Chronologie historique</span>
+                        <span class="map-floor-ar">الطابق 1 · الخط الزمني للتاريخ</span>
+                    </button>
+                    <button type="button" class="map-floor-btn" data-floor="e2" onclick="selectMuseumFloor('e2')">
+                        <span class="map-floor-fr">Étage 2 · Collections militaires</span>
+                        <span class="map-floor-ar">الطابق 2 · المجموعات العسكرية</span>
+                    </button>
+                    <button type="button" class="map-floor-btn" data-floor="e3" onclick="selectMuseumFloor('e3')">
+                        <span class="map-floor-fr">Étage 3 · Archives & mémoire</span>
+                        <span class="map-floor-ar">الطابق 3 · الأرشيف والذاكرة</span>
+                    </button>
+                </div>
+                <p class="map-note" id="mapFloorNote">Parcours indicatif — les QR des salles complètent la visite.</p>
             </aside>
         </div>
     </div>
@@ -1670,7 +1850,19 @@
 
             <button id="qrBtn" onclick="startCam()" type="button">Activer la caméra</button>
 
-            <p class="qr-note">Aucune donnée enregistrée · Accès local uniquement</p>
+            <div class="qr-alt">
+                <div class="qr-alt-lbl">Autres moyens</div>
+                <div class="qr-alt-row">
+                    <input type="text" id="qrManualId" placeholder="ex. artifact-001" autocomplete="off" autocapitalize="off">
+                    <button type="button" class="qr-alt-btn primary" onclick="tryManualQr()">Ouvrir</button>
+                </div>
+                <div class="qr-alt-row">
+                    <input type="file" id="qrFileInput" accept="image/*" onchange="onQrImageSelected(event)">
+                    <button type="button" class="qr-alt-btn" onclick="document.getElementById('qrFileInput').click()">Importer une image QR</button>
+                </div>
+            </div>
+
+            <p class="qr-note">Caméra ou image : le code doit correspondre à l’identifiant enregistré (ex. artifact-001).</p>
 
         </div>
     </div>
@@ -1836,33 +2028,55 @@ var CAM         = null;
 var SCAN_TIMER  = null;   /* setInterval handle              */
 var ACTIVE      = false;
 var LAST        = null;
+var SCAN_N      = 0;      /* frame counter for full-res passes */
 
 /* Create a detached canvas once and reuse it */
 var SCAN_CANVAS = document.createElement('canvas');
 var SCAN_CTX    = SCAN_CANVAS.getContext('2d', { willReadFrequently: true });
+
+function getCameraStream() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        return Promise.reject(new Error('NO_MEDIA'));
+    }
+    var tries = [
+        {
+            video: {
+                facingMode: { ideal: 'environment' },
+                width:  { ideal: 1920 },
+                height: { ideal: 1080 }
+            },
+            audio: false
+        },
+        {
+            video: {
+                facingMode: { ideal: 'environment' },
+                width:  { ideal: 1280 },
+                height: { ideal: 720 }
+            },
+            audio: false
+        },
+        { video: { facingMode: { ideal: 'environment' } }, audio: false },
+        { video: true, audio: false }
+    ];
+    function attempt(i) {
+        if (i >= tries.length) return Promise.reject(new Error('CAMERA_FAIL'));
+        return navigator.mediaDevices.getUserMedia(tries[i]).catch(function() {
+            return attempt(i + 1);
+        });
+    }
+    return attempt(0);
+}
 
 function startCam() {
     var btn = document.getElementById('qrBtn');
     btn.disabled = true;
     setStatus('wait', 'Demande d\'accès en cours…');
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setStatus('err', 'Caméra non supportée');
-        btn.disabled = false;
-        return;
-    }
-
-    navigator.mediaDevices.getUserMedia({
-        video: {
-            facingMode: { ideal: 'environment' },
-            width:  { ideal: 640 },
-            height: { ideal: 480 }
-        },
-        audio: false
-    })
+    getCameraStream()
     .then(function(stream) {
         CAM    = stream;
         ACTIVE = true;
+        SCAN_N = 0;
 
         var v = document.getElementById('qrVideo');
         v.srcObject = stream;
@@ -1872,11 +2086,11 @@ function startCam() {
         document.getElementById('qrFrame').style.display = 'block';
         document.getElementById('qrBtn').style.display   = 'none';
 
-        setStatus('scanning', 'Caméra active — Cherche un QR code…');
+        setStatus('scanning', 'Caméra active — placez le QR bien net et lumineux');
 
         function beginScan() {
             if (SCAN_TIMER) return; /* guard: start only once */
-            SCAN_TIMER = setInterval(scanFrame, 150); /* ~6 fps — fast enough, CPU-friendly */
+            SCAN_TIMER = setInterval(scanFrame, 100);
         }
 
         /* All three events + hard timeout to cover every browser */
@@ -1889,13 +2103,17 @@ function startCam() {
     })
     .catch(function(err) {
         btn.disabled = false;
+        if (err && err.message === 'NO_MEDIA') {
+            setStatus('err', 'Caméra non supportée');
+            return;
+        }
         var m = {
             'NotAllowedError'     : 'Permission refusée — autorisez la caméra dans les paramètres',
             'NotFoundError'       : 'Aucune caméra détectée',
             'NotReadableError'    : 'Caméra occupée par une autre application',
             'OverconstrainedError': 'Contrainte vidéo non supportée'
         };
-        setStatus('err', m[err.name] || 'Erreur caméra : ' + err.name);
+        setStatus('err', m[err.name] || 'Erreur caméra : ' + (err.name || err.message));
     });
 }
 
@@ -1906,8 +2124,11 @@ function scanFrame() {
     var v = document.getElementById('qrVideo');
     if (!v || v.readyState < 2 || v.videoWidth === 0 || v.videoHeight === 0) return;
 
-    /* Scale to ≤640px for speed without losing QR readability */
-    var scale = Math.min(1, 640 / v.videoWidth);
+    SCAN_N += 1;
+    /* Every 4th frame: full resolution decode (helps phone-screen / moiré) */
+    var useFull = (SCAN_N % 4 === 0);
+    var maxW = useFull ? 2048 : 1600;
+    var scale = Math.min(1, maxW / v.videoWidth);
     var cw    = Math.round(v.videoWidth  * scale);
     var ch    = Math.round(v.videoHeight * scale);
 
@@ -1927,77 +2148,75 @@ function scanFrame() {
 
         if (code && code.data && code.data !== LAST) {
             LAST = code.data;
-            onDetected(code.data);
+            onDetected(normalizeQrPayload(code.data));
         }
     } catch(e) { /* ignore single-frame decode errors */ }
 }
 
-/* ═══════════════════════════════════════════════════════
-   BASE DE DONNÉES DES ARTEFACTS
-   Clé = contenu exact du QR code scané
-   Ajoutez autant d'entrées que nécessaire.
-═══════════════════════════════════════════════════════ */
-var ARTIFACTS = {
+/* Trim, extra path segments, full URLs → artifact id */
+function normalizeQrPayload(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return s;
+    try {
+        var u = new URL(s);
+        var parts = u.pathname.split('/').filter(Boolean);
+        var last = parts[parts.length - 1];
+        if (last) return decodeURIComponent(last);
+    } catch (e) { /* not a URL */ }
+    return s;
+}
 
-  'artifact-001': {
-    modelSrc : '',   /* ex: '/models/sabre.glb' — laisser vide = placeholder */
-    category : 'Armes historiques · الأسلحة التاريخية',
-    ref      : 'MAC-2024-001',
-    epoque   : 'XIXe siècle',
-    section  : 'Salle I — Guerre de libération',
-    ar: {
-      title: 'سيف الأمير عبد القادر',
-      desc : 'سيف تاريخي يعود إلى القرن التاسع عشر، استخدمه الأمير عبد القادر الجزائري في معاركه ضد الاستعمار الفرنسي. يتميز بنقوش عربية دقيقة على النصل وقبضة من العاج المزيّن. يُعدّ هذا السيف رمزاً للمقاومة والكرامة الوطنية الجزائرية.'
-    },
-    es: {
-      title: 'Espada del Emir Abd el-Qader',
-      desc : 'Espada histórica del siglo XIX utilizada por el Emir Abd el-Qader al-Argelino en sus batallas contra la colonización francesa. Presenta delicadas inscripciones árabes en la hoja y una empuñadura de marfil decorado. Esta espada es un símbolo de resistencia y dignidad nacional argelina.'
-    },
-    fr: {
-      title: 'Sabre de l\'Émir Abd el-Kader',
-      desc : 'Sabre historique du XIXe siècle utilisé par l\'Émir Abd el-Kader al-Djazaïri dans ses combats contre la colonisation française. Il présente de fines inscriptions arabes sur la lame et une poignée en ivoire sculpté. Ce sabre est un symbole de résistance et de dignité nationale algérienne.'
-    },
-    en: {
-      title: 'Sword of Emir Abd el-Kader',
-      desc : 'A 19th-century historical sword used by Emir Abd el-Kader al-Jazairi in his battles against French colonisation. It features fine Arabic inscriptions on the blade and a carved ivory handle. This sword is a symbol of Algerian national resistance and dignity.'
-    },
-    zh: {
-      title: '埃米尔·阿卜杜·卡迪尔之剑',
-      desc : '这是一把19世纪的历史名剑，由阿尔及利亚埃米尔·阿卜杜勒·卡迪尔在抗击法国殖民统治的战役中使用。剑身刻有精细的阿拉伯铭文，手柄由雕刻象牙制成。这把剑是阿尔及利亚民族抵抗精神与尊严的象征。'
+function tryManualQr() {
+    var el = document.getElementById('qrManualId');
+    var v = normalizeQrPayload(el ? el.value : '');
+    if (!v) {
+        setStatus('err', 'Entrez un identifiant (ex. artifact-001)');
+        return;
     }
-  },
+    onDetected(v);
+}
 
-  'artifact-002': {
-    modelSrc : '',
-    category : 'Documents militaires · الوثائق العسكرية',
-    ref      : 'MAC-2024-002',
-    epoque   : '1954 — 1962',
-    section  : 'Salle II — Guerre d\'indépendance',
-    ar: {
-      title: 'وثيقة بيان أول نوفمبر 1954',
-      desc : 'نسخة أصلية من بيان أول نوفمبر 1954، الذي أعلن فيه جبهة التحرير الوطني اندلاع الثورة الجزائرية المسلحة ضد الاستعمار الفرنسي. يُعدّ هذا البيان وثيقة تأسيسية في تاريخ الجزائر الحديث، ويمثل انطلاقة كفاح الشعب الجزائري من أجل الحرية والاستقلال.'
-    },
-    es: {
-      title: 'Documento del Manifiesto del 1 de Noviembre de 1954',
-      desc : 'Copia original del Manifiesto del 1 de noviembre de 1954, en el que el Frente de Liberación Nacional proclamó el inicio de la revolución armada argelina contra el colonialismo francés. Este manifiesto es un documento fundacional en la historia moderna de Argelia.'
-    },
-    fr: {
-      title: 'Proclamation du 1er Novembre 1954',
-      desc : 'Exemplaire original de la proclamation du 1er novembre 1954, par laquelle le Front de Libération Nationale a déclaré le déclenchement de la Révolution algérienne armée contre le colonialisme français. Ce document fondateur marque l\'entrée de l\'Algérie dans la lutte pour son indépendance.'
-    },
-    en: {
-      title: 'Proclamation of November 1st, 1954',
-      desc : 'An original copy of the November 1st, 1954 proclamation, in which the National Liberation Front announced the start of the armed Algerian Revolution against French colonialism. This founding document marks Algeria\'s entry into the struggle for independence.'
-    },
-    zh: {
-      title: '1954年11月1日宣言文件',
-      desc : '这是1954年11月1日宣言的原件，民族解放阵线在此宣告了阿尔及利亚武装革命对抗法国殖民主义的开始。这份具有奠基意义的文件标志着阿尔及利亚人民争取独立斗争的开始。'
-    }
-  }
+function onQrImageSelected(ev) {
+    var f = ev.target && ev.target.files && ev.target.files[0];
+    ev.target.value = '';
+    if (!f || typeof jsQR === 'undefined') return;
+    setStatus('wait', 'Lecture de l’image…');
+    var reader = new FileReader();
+    reader.onload = function() {
+        var img = new Image();
+        img.onload = function() {
+            try {
+                var maxSide = 2048;
+                var w = img.naturalWidth;
+                var h = img.naturalHeight;
+                var sc = (w > maxSide || h > maxSide) ? Math.min(maxSide / w, maxSide / h) : 1;
+                var cw = Math.round(w * sc);
+                var ch = Math.round(h * sc);
+                if (SCAN_CANVAS.width !== cw) SCAN_CANVAS.width = cw;
+                if (SCAN_CANVAS.height !== ch) SCAN_CANVAS.height = ch;
+                SCAN_CTX.drawImage(img, 0, 0, cw, ch);
+                var imgData = SCAN_CTX.getImageData(0, 0, cw, ch);
+                var code = jsQR(imgData.data, imgData.width, imgData.height, {
+                    inversionAttempts: 'attemptBoth'
+                });
+                if (code && code.data) {
+                    setStatus('ok', 'QR lu depuis l’image');
+                    onDetected(normalizeQrPayload(code.data));
+                } else {
+                    setStatus('err', 'Aucun QR détecté sur cette image');
+                }
+            } catch (e) {
+                setStatus('err', 'Impossible de lire l’image');
+            }
+        };
+        img.onerror = function() { setStatus('err', 'Image invalide'); };
+        img.src = reader.result;
+    };
+    reader.onerror = function() { setStatus('err', 'Fichier illisible'); };
+    reader.readAsDataURL(f);
+}
 
-};
-
-/* 若QR码未在数据库中，使用此通用占位 */
+/* QR non reconnu: contenu de secours */
 var ARTIFACT_FALLBACK = {
     modelSrc : '',
     category : 'Collection du musée · مجموعة المتحف',
@@ -2018,8 +2237,11 @@ var NARRATING        = false;
 
 /* Code détecté — ouvre l'overlay artefact */
 function onDetected(val) {
+    val = normalizeQrPayload(val);
     ACTIVE = false;
     setStatus('ok', 'Code QR détecté !');
+    document.getElementById('qrRes').style.display = 'block';
+    document.getElementById('qrResVal').textContent = val;
     if (navigator.vibrate) navigator.vibrate(45);
     stopCam();
     closeQr();
@@ -2033,23 +2255,23 @@ function rescan() {
     document.getElementById('qrFrame').style.display = 'block';
     document.getElementById('qrBtn').style.display   = 'none';
     setStatus('scanning', 'Caméra active — Cherche un QR code…');
-    if (!SCAN_TIMER) SCAN_TIMER = setInterval(scanFrame, 150);
+    if (!SCAN_TIMER) SCAN_TIMER = setInterval(scanFrame, 100);
 }
 
 /* ════════════════════════════════════════════════
    ARTIFACT OVERLAY
 ════════════════════════════════════════════════ */
-function openArtifact(qrVal) {
-    var data = ARTIFACTS[qrVal] || ARTIFACT_FALLBACK;
-    CURRENT_ARTIFACT = data;
+async function openArtifact(qrVal) {
+    var data = await fetchArtifactByQr(qrVal);
+    CURRENT_ARTIFACT = data || ARTIFACT_FALLBACK;
     CURRENT_LANG     = 'ar';
     NARRATING        = false;
 
     /* 3D model */
     var mv = document.getElementById('artModelViewer');
     var ph = document.getElementById('art3dPlaceholder');
-    if (data.modelSrc) {
-        mv.setAttribute('src', data.modelSrc);
+    if (CURRENT_ARTIFACT.modelSrc) {
+        mv.setAttribute('src', CURRENT_ARTIFACT.modelSrc);
         ph.classList.add('hidden');
     } else {
         mv.removeAttribute('src');
@@ -2057,10 +2279,10 @@ function openArtifact(qrVal) {
     }
 
     /* Meta */
-    document.getElementById('artCategory').textContent = data.category;
-    document.getElementById('artRef').textContent      = data.ref;
-    document.getElementById('artEpoque').textContent   = data.epoque;
-    document.getElementById('artSection').textContent  = data.section;
+    document.getElementById('artCategory').textContent = CURRENT_ARTIFACT.category;
+    document.getElementById('artRef').textContent      = CURRENT_ARTIFACT.ref;
+    document.getElementById('artEpoque').textContent   = CURRENT_ARTIFACT.epoque;
+    document.getElementById('artSection').textContent  = CURRENT_ARTIFACT.section;
 
     /* Language default = Arabic */
     _applyLang('ar');
@@ -2074,6 +2296,19 @@ function openArtifact(qrVal) {
     var ov = document.getElementById('artOverlay');
     ov.classList.add('open');
     document.body.style.overflow = 'hidden';
+}
+
+async function fetchArtifactByQr(qrVal) {
+    try {
+        var response = await fetch('/api/artifacts/by-qr/' + encodeURIComponent(qrVal), {
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) return ARTIFACT_FALLBACK;
+        return await response.json();
+    } catch (e) {
+        return ARTIFACT_FALLBACK;
+    }
 }
 
 function closeArtifact() {
@@ -2203,6 +2438,101 @@ function setStatus(type, msg) {
     if (type === 'ok')       dot.classList.add('ok');
     if (type === 'err')      dot.classList.add('err');
 }
+
+/* ── Plan du musée : parcours par étage ── */
+var MUSEUM_FLOOR_DATA = {
+    rdc: {
+        title: 'Parcours — Rez-de-chaussée',
+        path: 'M18,70 L22,36 C28,18 48,18 56,30 C64,42 52,52 66,58 C76,64 82,44 88,38',
+        note: 'Hall d’accueil, orientation et accès aux expositions du niveau principal.',
+        points: [
+            { top: '24%', left: '26%', ar: 'الاستقبال والتذاكر', fr: 'Accueil & billetterie' },
+            { top: '36%', left: '48%', ar: 'لوحة المعلومات', fr: 'Panneau d’orientation' },
+            { top: '50%', left: '34%', ar: 'المتجر', fr: 'Boutique & catalogues' },
+            { top: '58%', left: '64%', ar: 'العرض المؤقت', fr: 'Salle d’exposition temporaire' },
+            { top: '44%', left: '78%', ar: 'السلالم والمصعد', fr: 'Escaliers & ascenseur' }
+        ]
+    },
+    e1: {
+        title: 'Parcours — Chronologie (étage 1)',
+        path: 'M14,58 Q32,24 54,34 Q68,40 78,52 L86,36',
+        note: 'Frise chronologique et salles thématiques de l’histoire militaire nationale.',
+        points: [
+            { top: '26%', left: '22%', ar: 'ما قبل الاستعمار', fr: 'Pré-colonial & réformes' },
+            { top: '34%', left: '44%', ar: 'المرحلة الاستعمارية', fr: 'Période coloniale' },
+            { top: '46%', left: '58%', ar: 'جبهة التحرير', fr: 'Guerre de libération' },
+            { top: '56%', left: '36%', ar: 'الاستقلال', fr: 'Indépendance & ANP' },
+            { top: '40%', left: '76%', ar: 'قاعة الوثائق', fr: 'Salle documents & cartes' }
+        ]
+    },
+    e2: {
+        title: 'Parcours — Collections (étage 2)',
+        path: 'M20,68 C28,40 40,28 56,36 S78,48 84,32',
+        note: 'Uniformes, armements légers, insignes et matériel de terrain présentés par époque.',
+        points: [
+            { top: '28%', left: '30%', ar: 'الأزياء العسكرية', fr: 'Uniformes & décorations' },
+            { top: '40%', left: '52%', ar: 'الأسلحة الخفيفة', fr: 'Armes légères' },
+            { top: '52%', left: '40%', ar: 'المعدات الميدانية', fr: 'Équipement de campagne' },
+            { top: '38%', left: '72%', ar: 'الوسائل المدرعة', fr: 'Maquettes véhicules' },
+            { top: '62%', left: '58%', ar: 'زاوية تفاعلية', fr: 'Espace tactile enfants' }
+        ]
+    },
+    e3: {
+        title: 'Parcours — Archives & mémoire (étage 3)',
+        path: 'M16,62 L28,32 Q48,20 62,38 Q74,52 88,44',
+        note: 'Archives photographiques, témoignages et espace de recherche pour le public averti.',
+        points: [
+            { top: '30%', left: '24%', ar: 'أرشيف الصور', fr: 'Photothèque' },
+            { top: '42%', left: '46%', ar: 'شهادات حية', fr: 'Témoignages audio' },
+            { top: '54%', left: '34%', ar: 'قاعة البحث', fr: 'Salle de consultation' },
+            { top: '48%', left: '70%', ar: 'الرموز والأعلام', fr: 'Drapeaux & emblèmes' },
+            { top: '64%', left: '56%', ar: 'خصومات للمجموعات', fr: 'Réservation groupes' }
+        ]
+    }
+};
+
+function selectMuseumFloor(key) {
+    var d = MUSEUM_FLOOR_DATA[key];
+    if (!d) return;
+
+    var titleEl = document.getElementById('mapBoardTitle');
+    var pathEl = document.getElementById('mapRoutePath');
+    var layer = document.getElementById('mapPointsLayer');
+    var noteEl = document.getElementById('mapFloorNote');
+
+    if (titleEl) titleEl.textContent = d.title;
+    if (pathEl) pathEl.setAttribute('d', d.path);
+    if (noteEl) noteEl.textContent = d.note;
+
+    if (layer) {
+        layer.innerHTML = '';
+        d.points.forEach(function(p) {
+            var wrap = document.createElement('div');
+            wrap.className = 'map-point';
+            wrap.style.top = p.top;
+            wrap.style.left = p.left;
+            wrap.innerHTML = '<span class="map-point-dot"></span><div class="map-point-label"><span class="map-point-name-ar">' + p.ar + '</span><span class="map-point-name-fr">' + p.fr + '</span></div>';
+            layer.appendChild(wrap);
+        });
+    }
+
+    document.querySelectorAll('.map-floor-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-floor') === key);
+    });
+}
+
+(function() {
+    var m = document.getElementById('qrManualId');
+    if (m) {
+        m.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); tryManualQr(); }
+        });
+    }
+})();
+
+document.addEventListener('DOMContentLoaded', function() {
+    selectMuseumFloor('rdc');
+});
 
 </script>
 
