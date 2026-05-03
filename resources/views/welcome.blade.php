@@ -41,13 +41,18 @@
             --header-h: 64px;
             --hdr-green:  #132016;
             --dark-green: #0e1b10;
+            --alg-green:  #0f5b2f;
+            --alg-red:    #b02a2a;
             --gold:       #c8a84b;
             --gold-lt:    #dfc278;
+            --gold-deep:  #a8842e;
             --gold-dim:   rgba(200,168,75,0.15);
             --ivory:      #f3ecd9;
+            --sand:       #e9dcc1;
             --ink:        #1c1406;
             --ink-mid:    #3a2e18;
             --muted-gold: rgba(200,168,75,0.6);
+            --btn-shadow: 0 8px 24px rgba(0,0,0,0.28);
             --fa: 'Amiri', 'Traditional Arabic', serif;
             --ff: 'Cormorant Garamond', Georgia, serif;
             --fh: 'Cinzel', 'Times New Roman', serif;
@@ -75,19 +80,144 @@
             background: var(--hdr-green);
             border-bottom: 1px solid rgba(200,168,75,0.2);
             backdrop-filter: blur(6px);
-            display: flex;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
             align-items: center;
-            justify-content: space-between;
-            padding: 0 36px;
+            gap: 10px;
+            padding: 0 clamp(14px, 3vw, 36px);
         }
 
         .hdr-block {
             display: flex;
             align-items: center;
             gap: 13px;
+            min-width: 0;
         }
 
-        .hdr-block.r { flex-direction: row-reverse; }
+        .hdr-block.l { justify-self: start; }
+        .hdr-block.r {
+            flex-direction: row-reverse;
+            justify-self: end;
+            text-align: right;
+        }
+
+        .hdr-site-lang {
+            justify-self: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .hdr-lang-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 34px;
+            padding: 0 12px 0 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(200,168,75,0.38);
+            background: rgba(8, 22, 14, 0.55);
+            color: rgba(243,236,217,0.95);
+            font-family: var(--fu);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.06),
+                0 4px 14px rgba(0,0,0,0.25);
+            transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+        }
+
+        .hdr-lang-btn:hover {
+            border-color: rgba(223,194,120,0.55);
+            background: rgba(14, 35, 22, 0.72);
+        }
+
+        .hdr-lang-btn svg { flex-shrink: 0; opacity: 0.75; }
+
+        .hdr-lang-code {
+            min-width: 22px;
+            text-align: center;
+            letter-spacing: 0.12em;
+        }
+
+        .hdr-lang-chevron {
+            font-size: 9px;
+            opacity: 0.55;
+            margin-left: -2px;
+        }
+
+        .hdr-lang-sheet {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 208px;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid rgba(200,168,75,0.28);
+            background: rgba(10, 28, 18, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow:
+                0 16px 40px rgba(0,0,0,0.45),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+            display: none;
+            z-index: 120;
+        }
+
+        .hdr-site-lang.open .hdr-lang-sheet { display: block; }
+
+        .hdr-lang-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 12px;
+            background: transparent;
+            color: rgba(255,255,255,0.88);
+            font-family: var(--fu);
+            font-size: 13px;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .hdr-lang-row:hover { background: rgba(200,168,75,0.1); color: var(--gold-lt); }
+
+        .hdr-lang-row.active {
+            background: rgba(200,168,75,0.14);
+            color: var(--gold);
+        }
+
+        .hdr-lang-row-flag { font-size: 17px; line-height: 1; width: 24px; text-align: center; }
+        .hdr-lang-row-name { flex: 1; min-width: 0; }
+        .hdr-lang-row-mini {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: rgba(200,168,75,0.55);
+        }
+
+        .hdr-lang-row.active .hdr-lang-row-mini { color: var(--gold-lt); }
+
+        .hdr-ar {
+            font-family: var(--fa);
+            font-size: clamp(9px, 1.05vw, 12px);
+            font-weight: 700;
+            color: rgba(255,255,255,0.88);
+            direction: rtl;
+            line-height: 1.3;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: min(220px, 28vw);
+        }
+
+        .hdr-block.r .hdr-ar { direction: rtl; text-align: right; }
 
         .emblem {
             width: 56px; height: 56px;
@@ -211,15 +341,7 @@
             to   { opacity:1; transform: translateY(0); }
         }
 
-        .hero-republic-ar {
-            font-family: var(--fa);
-            font-size: clamp(14px,1.9vw,20px);
-            color: rgba(255,255,255,0.72);
-            direction: rtl;
-            margin-bottom: 5px;
-        }
-
-        .hero-republic-fr {
+        .hero-republic-line {
             font-family: var(--fh);
             font-size: 9.5px;
             font-weight: 500;
@@ -227,6 +349,16 @@
             text-transform: uppercase;
             color: var(--muted-gold);
             margin-bottom: 18px;
+        }
+
+        body.site-lang-ar .hero-republic-line {
+            font-family: var(--fa);
+            font-size: clamp(14px,1.9vw,20px);
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: none;
+            color: rgba(255,255,255,0.72);
+            direction: rtl;
         }
 
         /* Séparateur doré ♦ */
@@ -250,18 +382,7 @@
             flex-shrink: 0;
         }
 
-        .hero-ar {
-            font-family: var(--fa);
-            font-size: clamp(48px,7vw,76px);
-            font-weight: 700;
-            color: #fff;
-            direction: rtl;
-            line-height: 1.1;
-            margin-bottom: 4px;
-            text-shadow: 0 2px 18px rgba(0,0,0,0.36);
-        }
-
-        .hero-fr {
+        .hero-title-line {
             font-family: var(--ff);
             font-size: clamp(26px,4.1vw,54px);
             font-weight: 400;
@@ -269,7 +390,21 @@
             color: var(--gold-lt);
             margin-bottom: 18px;
             text-shadow: 0 0 12px rgba(200,168,75,0.16);
+            line-height: 1.18;
         }
+
+        body.site-lang-ar .hero-title-line {
+            font-family: var(--fa);
+            font-size: clamp(48px,7vw,76px);
+            font-style: normal;
+            font-weight: 700;
+            color: #fff;
+            direction: rtl;
+            text-shadow: 0 2px 18px rgba(0,0,0,0.36);
+        }
+
+        body.site-lang-ar .hero-content { direction: rtl; }
+        body.site-lang-ar .hero-btns { direction: rtl; }
 
         .hero-desc {
             font-family: var(--ff);
@@ -303,22 +438,28 @@
             letter-spacing: 0.2em;
             text-transform: uppercase;
             padding: 18px 32px;
-            border: none;
+            border: 1px solid transparent;
             cursor: pointer;
-            transition: all 0.18s ease;
-            border-radius: 2px;
+            transition: transform 0.18s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, filter 0.2s ease;
+            border-radius: 10px;
             position: relative;
             overflow: hidden;
             min-height: 52px;
             touch-action: manipulation;
+            transform: translateY(0);
         }
 
         .hbtn-gold {
-            background: var(--gold);
+            background: linear-gradient(135deg, var(--gold-lt) 0%, var(--gold) 42%, var(--gold-deep) 100%);
             color: #1c1406;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.28);
+            border-color: rgba(28,20,6,0.18);
+            box-shadow: var(--btn-shadow);
         }
-        .hbtn-gold:hover { background: var(--gold-lt); }
+        .hbtn-gold:hover {
+            filter: saturate(1.05) brightness(1.02);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.34);
+        }
 
         .hbtn::before {
             content: "";
@@ -341,26 +482,46 @@
         }
 
         .hbtn-outline {
-            background: transparent;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
             color: rgba(255,255,255,0.82);
             border: 1px solid rgba(255,255,255,0.34);
+            box-shadow: inset 0 0 0 1px rgba(200,168,75,0.06);
         }
         .hbtn-outline:hover {
             border-color: var(--gold);
             color: #fff;
             background: rgba(200,168,75,0.1);
+            transform: translateY(-1px);
         }
 
         /* Troisième bouton : même famille, accent doré */
         .hbtn-admin {
-            border-color: rgba(200,168,75,0.45);
+            border-color: rgba(176,42,42,0.45);
             color: var(--gold-lt);
             letter-spacing: 0.16em;
+            background:
+                radial-gradient(circle at 14% 15%, rgba(176,42,42,0.16), transparent 48%),
+                rgba(255,255,255,0.02);
         }
         .hbtn-admin:hover {
-            border-color: var(--gold);
+            border-color: rgba(176,42,42,0.72);
             color: #fff;
-            background: rgba(200,168,75,0.12);
+            background:
+                radial-gradient(circle at 14% 15%, rgba(176,42,42,0.22), transparent 52%),
+                rgba(200,168,75,0.12);
+        }
+
+        .hbtn:focus-visible,
+        .map-floor-btn:focus-visible,
+        #qrBtn:focus-visible,
+        .qr-alt-btn:focus-visible,
+        .art-back:focus-visible,
+        .lang-drop-btn:focus-visible,
+        .lang-btn:focus-visible,
+        .art-narrate:focus-visible {
+            outline: 2px solid var(--sand);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(15,91,47,0.22);
         }
 
         /* Chevron bas */
@@ -378,6 +539,12 @@
             min-height: 44px;
             min-width: 44px;
             touch-action: manipulation;
+            border-radius: 999px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .hero-chevron:hover {
+            color: var(--gold-lt);
+            background: rgba(200,168,75,0.08);
         }
 
         @keyframes bounce {
@@ -398,23 +565,24 @@
             text-align: center;
         }
 
-        .org-ar {
-            font-family: var(--fa);
-            font-size: clamp(22px,3.5vw,40px);
-            font-weight: 700;
-            color: var(--ink);
-            direction: rtl;
-            line-height: 1.35;
-            margin-bottom: 8px;
-        }
-
-        .org-fr {
+        .org-line {
             font-family: var(--fu);
             font-size: 11px;
             font-weight: 500;
             letter-spacing: 0.28em;
             text-transform: uppercase;
             color: var(--ink-mid);
+            line-height: 1.45;
+        }
+
+        body.site-lang-ar .org-line {
+            font-family: var(--fa);
+            font-size: clamp(22px,3.5vw,38px);
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: none;
+            color: var(--ink);
+            direction: rtl;
         }
 
         .org-sep {
@@ -457,20 +625,46 @@
             margin-bottom: 34px;
         }
 
-        .map-ar {
-            font-family: var(--fa);
-            font-size: clamp(24px, 4vw, 42px);
-            color: var(--ink);
-            direction: rtl;
-            margin-bottom: 8px;
-        }
-
-        .map-fr {
+        .map-headline {
             font-family: var(--fh);
-            font-size: 11px;
+            font-size: clamp(11px, 1.05vw, 12px);
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: var(--ink-mid);
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        body.site-lang-ar .map-headline {
+            font-family: var(--fa);
+            font-size: clamp(24px, 4vw, 40px);
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: none;
+            color: var(--ink);
+            direction: rtl;
+        }
+
+        body.site-lang-ar .map-panel,
+        body.site-lang-ar .map-panel h3,
+        body.site-lang-ar .map-panel-hint,
+        body.site-lang-ar .map-note {
+            direction: rtl;
+            text-align: right;
+        }
+
+        body.site-lang-ar .map-panel h3 {
+            font-style: normal;
+        }
+
+        body.site-lang-ar .sec-map .map-title {
+            direction: rtl;
+            right: 20px;
+            left: auto;
+            text-align: right;
+            font-style: normal;
+            font-family: var(--fa);
         }
 
         .map-grid {
@@ -574,43 +768,50 @@
             width: 100%;
             text-align: left;
             cursor: pointer;
-            border: 1px solid rgba(200,168,75,0.28);
+            border: 1px solid rgba(200,168,75,0.34);
             background: rgba(200,168,75,0.045);
             color: var(--ink-mid);
-            padding: 12px 14px;
-            border-radius: 6px;
+            padding: 13px 14px;
+            border-radius: 10px;
             font-family: var(--fu);
-            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.18s ease;
             touch-action: manipulation;
         }
 
         .map-floor-btn:hover {
             border-color: rgba(200,168,75,0.5);
             background: rgba(200,168,75,0.09);
+            transform: translateY(-1px);
         }
 
         .map-floor-btn.active {
             border-color: rgba(200,168,75,0.65);
-            background: rgba(200,168,75,0.12);
-            box-shadow: 0 0 0 1px rgba(200,168,75,0.2);
+            background:
+                linear-gradient(90deg, rgba(176,42,42,0.08), rgba(200,168,75,0.16) 32%, rgba(200,168,75,0.12));
+            box-shadow: 0 0 0 1px rgba(200,168,75,0.2), 0 8px 18px rgba(28,20,6,0.12);
         }
 
-        .map-floor-fr {
+        .map-floor-label {
             display: block;
             font-family: var(--fh);
             font-size: 11px;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--ink);
+            line-height: 1.35;
         }
 
-        .map-floor-ar {
-            display: block;
-            margin-top: 6px;
+        body.site-lang-ar .map-floor-label {
             font-family: var(--fa);
             font-size: 13px;
-            color: rgba(28,20,6,0.72);
+            letter-spacing: 0;
+            text-transform: none;
             direction: rtl;
+            font-weight: 600;
+        }
+
+        body.site-lang-ar .map-floor-btn {
+            text-align: right;
         }
 
         .map-points-layer {
@@ -651,24 +852,22 @@
             box-shadow: 0 4px 12px rgba(28,20,6,0.12);
         }
 
-        .map-point-name-ar {
-            display: block;
-            font-family: var(--fa);
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--ink);
-            direction: rtl;
-            line-height: 1.25;
-        }
-
-        .map-point-name-fr {
+        .map-point-name {
             display: block;
             font-family: var(--ff);
-            font-size: 10px;
+            font-size: 11px;
             font-style: italic;
-            color: rgba(58,46,24,0.85);
-            margin-top: 3px;
-            line-height: 1.2;
+            font-weight: 500;
+            color: var(--ink);
+            line-height: 1.25;
+            text-align: center;
+        }
+
+        body.site-lang-ar .map-point-name {
+            font-family: var(--fa);
+            font-style: normal;
+            font-weight: 700;
+            direction: rtl;
         }
 
         .map-note {
@@ -704,21 +903,21 @@
             transform: rotate(45deg);
         }
 
-        .ftr-ar {
-            font-family: var(--fa);
-            font-size: 18px;
-            color: var(--gold-lt);
-            direction: rtl;
-            margin-bottom: 4px;
-        }
-
-        .ftr-fr {
+        .ftr-title-line {
             font-family: var(--ff);
             font-size: 15px;
             font-style: italic;
             color: var(--muted-gold);
             margin-bottom: 26px;
             text-shadow: 0 0 10px rgba(200,168,75,0.1);
+        }
+
+        body.site-lang-ar .ftr-title-line {
+            font-family: var(--fa);
+            font-size: 18px;
+            font-style: normal;
+            color: var(--gold-lt);
+            direction: rtl;
         }
 
         .ftr-copy {
@@ -782,7 +981,7 @@
             width: 30px; height: 30px;
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 3px;
+            border-radius: 8px;
             color: rgba(255,255,255,0.45);
             font-size: 16px;
             cursor: pointer;
@@ -790,7 +989,7 @@
             transition: all 0.18s;
         }
 
-        .qr-x:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .qr-x:hover { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(200,168,75,0.34); }
 
         .qr-body { padding: 20px; }
 
@@ -941,18 +1140,23 @@
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: var(--ink);
-            background: var(--gold);
+            background: linear-gradient(135deg, var(--gold-lt), var(--gold) 45%, var(--gold-deep));
             padding: 14px;
             border: none;
-            border-radius: 2px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: transform 0.18s ease, filter 0.2s ease, box-shadow 0.2s ease;
             margin-top: 4px;
             min-height: 50px;
             touch-action: manipulation;
+            box-shadow: var(--btn-shadow);
         }
 
-        #qrBtn:hover { background: var(--gold-lt); }
+        #qrBtn:hover {
+            filter: brightness(1.03);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 26px rgba(0,0,0,0.3);
+        }
         #qrBtn:disabled { opacity: 0.35; cursor: not-allowed; }
 
         .qr-note {
@@ -1002,21 +1206,26 @@
             letter-spacing: 0.14em;
             text-transform: uppercase;
             padding: 10px 14px;
-            border-radius: 3px;
+            border-radius: 8px;
             border: 1px solid rgba(200,168,75,0.35);
             background: rgba(200,168,75,0.08);
             color: var(--gold-lt);
             cursor: pointer;
             white-space: nowrap;
             touch-action: manipulation;
+            transition: transform 0.18s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .qr-alt-btn:hover { background: rgba(200,168,75,0.14); }
+        .qr-alt-btn:hover {
+            background: rgba(200,168,75,0.15);
+            border-color: rgba(200,168,75,0.52);
+            transform: translateY(-1px);
+        }
         .qr-alt-btn.primary {
-            background: var(--gold);
+            background: linear-gradient(135deg, var(--gold-lt), var(--gold));
             color: var(--ink);
             border-color: var(--gold);
         }
-        .qr-alt-btn.primary:hover { background: var(--gold-lt); }
+        .qr-alt-btn.primary:hover { filter: brightness(1.02); }
         #qrFileInput { display: none; }
 
         /* ============================================================
@@ -1024,10 +1233,21 @@
         ============================================================ */
         @media (max-width: 600px) {
             :root { --header-h: 60px; }
-            .hdr { padding: 0 12px; }
+            .hdr { padding: 0 8px; gap: 6px; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); }
             .hdr-block { gap: 8px; }
-            .hdr-t1, .hdr-t2 { font-size: 8.5px; }
-            .emblem { width: 44px; height: 44px; }
+            .hdr-t1, .hdr-t2 { font-size: 8px; }
+            .hdr-ar {
+                font-size: 8px;
+                max-width: min(100px, 24vw);
+                white-space: normal;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .hdr-lang-btn { height: 32px; padding: 0 10px 0 8px; gap: 6px; font-size: 9px; }
+            .hdr-lang-sheet { min-width: 186px; }
+            .emblem { width: 40px; height: 40px; }
             .hero {
                 min-height: calc(var(--vh, 1vh) * 100);
                 padding-top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -1038,10 +1258,12 @@
                 padding: 0 16px;
             }
             .hero-bg { width: 100vw; border: none; }
-            .hero-ar { font-size: clamp(36px, 13vw, 56px); }
-            .hero-fr { font-size: clamp(28px, 10vw, 40px); }
+            body.site-lang-ar .hero-title-line { font-size: clamp(36px, 13vw, 56px); }
+            body:not(.site-lang-ar) .hero-title-line { font-size: clamp(28px, 10vw, 40px); }
             .hero-desc { font-size: 15px; line-height: 1.55; margin-bottom: 22px; }
-            .hbtn { max-width: 100%; font-size: 11px; min-height: 50px; }
+            .hbtn { max-width: 100%; font-size: 11px; min-height: 52px; padding: 16px 18px; letter-spacing: 0.16em; }
+            .map-floor-btn { min-height: 48px; }
+            .lang-btn { min-height: 38px; padding: 7px 12px; }
             .hero-chevron { bottom: 10px; }
             .sec-org { padding: 64px 18px; }
             .os-line { width: 52px; }
@@ -1071,6 +1293,29 @@
             .hbtn:active {
                 transform: scale(0.992);
                 filter: brightness(0.995);
+            }
+            .map-floor-btn:active,
+            #qrBtn:active,
+            .qr-alt-btn:active,
+            .art-back:active,
+            .lang-btn:active,
+            .art-narrate:active {
+                transform: scale(0.99);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hbtn,
+            .map-floor-btn,
+            #qrBtn,
+            .qr-alt-btn,
+            .art-back,
+            .lang-drop-btn,
+            .lang-btn,
+            .art-narrate,
+            .hero-chevron {
+                transition: none !important;
+                animation: none !important;
             }
         }
 
@@ -1121,11 +1366,15 @@
             text-transform: uppercase;
             padding: 8px 16px;
             cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.2s;
+            border-radius: 8px;
+            transition: transform 0.18s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
             white-space: nowrap;
         }
-        .art-back:hover { background: var(--gold-dim); border-color: var(--gold); }
+        .art-back:hover {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            transform: translateY(-1px);
+        }
 
         /* Language dropdown */
         .lang-drop {
@@ -1141,8 +1390,9 @@
             text-transform: uppercase;
             padding: 7px 14px;
             border: 1px solid rgba(200,168,75,0.3);
-            border-radius: 2px;
-            background: rgba(200,168,75,0.06);
+            border-radius: 8px;
+            background:
+                linear-gradient(180deg, rgba(200,168,75,0.1), rgba(200,168,75,0.04));
             color: var(--gold-lt);
             cursor: pointer;
             transition: all 0.2s;
@@ -1198,7 +1448,11 @@
             gap: 6px;
             flex: 1;
             justify-content: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(200,168,75,0.3) transparent;
+            padding: 2px 0;
         }
 
         .lang-btn {
@@ -1206,24 +1460,26 @@
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.06em;
-            padding: 6px 14px;
+            padding: 7px 14px;
+            flex-shrink: 0;
             border: 1px solid rgba(200,168,75,0.22);
             border-radius: 20px;
             background: rgba(200,168,75,0.05);
             color: rgba(255,255,255,0.45);
             cursor: pointer;
-            transition: all 0.18s;
+            transition: transform 0.18s ease, border-color 0.18s ease, color 0.18s ease, background-color 0.18s ease;
             white-space: nowrap;
-            min-height: 32px;
+            min-height: 36px;
             touch-action: manipulation;
         }
         .lang-btn:hover {
             border-color: rgba(200,168,75,0.55);
             color: var(--gold-lt);
             background: rgba(200,168,75,0.1);
+            transform: translateY(-1px);
         }
         .lang-btn.active {
-            background: var(--gold);
+            background: linear-gradient(135deg, var(--gold-lt), var(--gold));
             border-color: var(--gold);
             color: var(--ink);
         }
@@ -1246,11 +1502,16 @@
             text-transform: uppercase;
             padding: 8px 16px;
             cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.2s;
+            border-radius: 8px;
+            transition: transform 0.18s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
             white-space: nowrap;
+            min-height: 36px;
+            touch-action: manipulation;
         }
-        .art-narrate:hover { background: rgba(200,168,75,0.16); }
+        .art-narrate:hover {
+            background: rgba(200,168,75,0.16);
+            transform: translateY(-1px);
+        }
         .art-narrate.speaking {
             background: rgba(200,168,75,0.18);
             border-color: var(--gold);
@@ -1261,120 +1522,128 @@
             50%      { box-shadow: 0 0 0 6px rgba(200,168,75,0); }
         }
 
-        /* ── Body split layout ── */
+        /* ── Body (professional single flow) ── */
         .art-body {
             flex: 1;
+            overflow-y: auto;
+            padding: 18px clamp(12px, 2vw, 28px) 24px;
             display: grid;
-            grid-template-columns: 1fr 1px 420px;
-            overflow: hidden;
+            gap: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(200,168,75,0.25) transparent;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(200,168,75,0.08), transparent 35%),
+                radial-gradient(circle at 100% 100%, rgba(200,168,75,0.06), transparent 40%),
+                linear-gradient(180deg, #071209 0%, #060e07 100%);
         }
 
-        /* Glowing gold divider */
-        .art-divider-v {
-            background: linear-gradient(
-                to bottom,
-                transparent 0%,
-                rgba(200,168,75,0.5) 15%,
-                var(--gold) 50%,
-                rgba(200,168,75,0.5) 85%,
-                transparent 100%
-            );
-            position: relative;
-        }
-        .art-divider-v::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%,-50%);
-            width: 9px; height: 9px;
-            background: var(--gold);
-            border-radius: 50%;
-            box-shadow: 0 0 18px 6px rgba(200,168,75,0.45);
+        .art-head {
+            border: 1px solid rgba(200,168,75,0.26);
+            border-radius: 14px;
+            padding: 16px 18px;
+            background: linear-gradient(180deg, rgba(16,35,22,0.9), rgba(10,24,16,0.94));
+            box-shadow: 0 12px 30px rgba(0,0,0,0.35);
         }
 
-        /* ── Left: visual panel ── */
-        .art-visual {
-            position: relative;
-            background: radial-gradient(ellipse at 30% 40%, #0f2412 0%, #060e07 100%);
+        .art-head-top {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            gap: 0;
+            gap: 12px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
         }
 
-        /* Atmospheric pattern overlay */
-        .art-visual::before {
-            content: '';
-            position: absolute; inset: 0;
-            background-image: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 40px,
-                rgba(200,168,75,0.015) 40px,
-                rgba(200,168,75,0.015) 41px
-            );
-            pointer-events: none;
-        }
-
-        /* Figure portrait (historical person) */
-        .art-figure-wrap {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0;
-            width: 100%;
-            padding: 32px 40px 0;
-        }
-
-        .art-figure-img {
-            width: clamp(180px, 22vw, 300px);
-            aspect-ratio: 3/4;
-            object-fit: cover;
-            object-position: top;
-            border: 2px solid rgba(200,168,75,0.4);
-            box-shadow:
-                0 0 0 6px rgba(200,168,75,0.06),
-                0 0 60px rgba(200,168,75,0.18),
-                0 30px 80px rgba(0,0,0,0.7);
-            filter: sepia(0.18) contrast(1.05);
-            display: block;
-        }
-
-        .art-figure-name {
+        .art-date-line {
             font-family: var(--fh);
-            font-size: clamp(20px, 2.2vw, 30px);
-            color: #fff;
-            letter-spacing: 0.06em;
-            text-align: center;
-            margin-top: 22px;
-            text-shadow: 0 2px 20px rgba(0,0,0,0.8);
-        }
-        .art-figure-dates {
-            font-family: var(--ff);
-            font-size: 13px;
-            font-style: italic;
-            color: var(--gold);
-            letter-spacing: 0.1em;
-            margin-top: 6px;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(223,194,120,0.9);
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(200,168,75,0.35);
+            background: rgba(200,168,75,0.08);
         }
 
         /* 3D viewer (for non-figure artifacts) */
         .art-viewer {
-            flex: 1;
+            min-height: clamp(280px, 46vh, 520px);
             width: 100%;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            border-radius: 14px;
+            border: 1px solid rgba(200,168,75,0.28);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+            background:
+                radial-gradient(circle at 20% 15%, rgba(200,168,75,0.14), transparent 35%),
+                radial-gradient(circle at 85% 85%, rgba(200,168,75,0.12), transparent 45%),
+                linear-gradient(180deg, #09150b 0%, #070f08 100%);
         }
         .art-viewer model-viewer {
             width: 100%; height: 100%;
             background-color: transparent;
             --progress-bar-color: var(--gold);
+        }
+        .art-image-stage {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            z-index: 3;
+            pointer-events: none;
+            padding: 28px;
+            background: radial-gradient(ellipse at center, rgba(9,22,13,0.35), rgba(7,12,8,0.8));
+        }
+        .art-image-stage[hidden] { display: none; }
+        .art-main-image {
+            width: min(75%, 520px);
+            max-height: 84%;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 1px solid rgba(223,194,120,0.55);
+            box-shadow:
+                0 30px 70px rgba(0,0,0,0.62),
+                0 0 0 6px rgba(200,168,75,0.08);
+            filter: saturate(0.95) contrast(1.04);
+        }
+        .art-gallery-strip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px;
+            border-radius: 12px;
+            background: rgba(7,14,9,0.7);
+            border: 1px solid rgba(200,168,75,0.24);
+            backdrop-filter: blur(6px);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(200,168,75,0.35) transparent;
+        }
+        .art-gallery-strip:empty { display: none; }
+        .art-gallery-thumb {
+            width: 92px;
+            height: 68px;
+            object-fit: cover;
+            border-radius: 9px;
+            border: 1px solid rgba(200,168,75,0.25);
+            cursor: pointer;
+            opacity: 0.72;
+            flex-shrink: 0;
+            transition: opacity 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+        }
+        .art-gallery-thumb:hover {
+            opacity: 0.98;
+            transform: translateY(-1px);
+            border-color: rgba(223,194,120,0.7);
+        }
+        .art-gallery-thumb.active {
+            opacity: 1;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px rgba(200,168,75,0.25);
         }
         .art-3d-placeholder {
             display: flex;
@@ -1395,84 +1664,16 @@
         .art-3d-icon svg { width: 38px; height: 38px; stroke: rgba(200,168,75,0.35); fill: none; stroke-width: 1; }
         .art-3d-label { font-family: var(--fh); font-size: 15px; color: rgba(200,168,75,0.25); letter-spacing: 0.15em; text-transform: uppercase; }
 
-        /* Linked artifacts strip (for historical figures) */
-        .art-links {
-            width: 100%;
-            flex-shrink: 0;
-            padding: 0 40px 28px;
-            position: relative;
-            z-index: 2;
-        }
-        .art-links-label {
-            font-family: var(--fh);
-            font-size: 9px;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            color: rgba(200,168,75,0.45);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .art-links-label::before, .art-links-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(200,168,75,0.12);
-        }
-        .art-links-grid {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 6px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(200,168,75,0.2) transparent;
-        }
-        .art-link-card {
-            flex-shrink: 0;
-            width: 110px;
-            cursor: pointer;
-            border: 1px solid rgba(200,168,75,0.15);
-            border-radius: 3px;
-            overflow: hidden;
-            background: rgba(200,168,75,0.04);
-            transition: all 0.22s;
-            position: relative;
-        }
-        .art-link-card:hover {
-            border-color: var(--gold);
-            box-shadow: 0 0 18px rgba(200,168,75,0.2);
-            transform: translateY(-3px);
-        }
-        .art-link-card img {
-            width: 100%;
-            height: 70px;
-            object-fit: cover;
-            display: block;
-            filter: brightness(0.75) sepia(0.1);
-            transition: filter 0.22s;
-        }
-        .art-link-card:hover img { filter: brightness(0.9) sepia(0.05); }
-        .art-link-caption {
-            padding: 6px 8px;
-            font-family: var(--ff);
-            font-size: 10px;
-            font-style: italic;
-            color: rgba(200,168,75,0.6);
-            line-height: 1.3;
-            text-align: center;
-        }
-
-        /* ── Right: description panel ── */
+        /* Description panel */
         .art-desc-panel {
-            background: #0a1a0c;
+            background: linear-gradient(180deg, rgba(12,28,18,0.98), rgba(10,24,15,0.98));
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
-            padding: 40px 32px 40px;
-            gap: 20px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(200,168,75,0.15) transparent;
+            padding: 18px 18px 16px;
+            gap: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(200,168,75,0.24);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.3);
         }
         .art-badge {
             display: inline-flex;
@@ -1576,23 +1777,24 @@
             color: rgba(200,168,75,0.5);
         }
 
+        .art-gallery-panel {
+            border: 1px solid rgba(200,168,75,0.22);
+            border-radius: 14px;
+            padding: 10px;
+            background: linear-gradient(180deg, rgba(12,27,17,0.92), rgba(8,20,13,0.95));
+            box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+        }
+
         @media (max-width: 900px) {
-            .art-body {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto 1px 1fr;
-                overflow-y: auto;
-            }
-            .art-divider-v {
-                background: linear-gradient(to right, transparent 0%, rgba(200,168,75,0.4) 50%, transparent 100%);
-                height: 1px;
-            }
-            .art-divider-v::after { display: none; }
-            .art-visual { min-height: 55vw; padding: 24px 20px 20px; }
-            .art-desc-panel { padding: 28px 20px 36px; }
+            .art-body { padding: 12px 10px 18px; gap: 12px; }
+            .art-head { padding: 12px 12px; }
+            .art-date-line { font-size: 9px; letter-spacing: 0.12em; }
+            .art-viewer { min-height: 250px; }
+            .art-desc-panel { padding: 14px 12px 12px; }
             .art-bar { padding: 0 14px; gap: 8px; }
             .art-back, .art-narrate { font-size: 10px; padding: 6px 10px; }
-            .art-figure-img { width: clamp(130px, 30vw, 200px); }
-            .art-links { padding: 0 20px 22px; }
+            .art-main-image { width: min(86%, 420px); max-height: 78%; }
+            .art-gallery-thumb { width: 78px; height: 58px; }
         }
     </style>
 </head>
@@ -1614,8 +1816,52 @@
             </svg>
         </div>
         <div class="hdr-txt">
+            <div class="hdr-ar" lang="ar" dir="rtl">وزارة الدفاع الوطني</div>
             <div class="hdr-t1">Ministère de la</div>
             <div class="hdr-t2">Défense Nationale</div>
+        </div>
+    </div>
+
+    <div class="hdr-site-lang" id="hdrSiteLang">
+        <button class="hdr-lang-btn" id="hdrLangBtn" type="button" aria-haspopup="menu" aria-expanded="false">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M3 12h18M12 3a17 17 0 0 1 4 18M12 3a17 17 0 0 0-4 18"/>
+            </svg>
+            <span class="hdr-lang-code" id="hdrLangCode">FR</span>
+            <span class="hdr-lang-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="hdr-lang-sheet" id="hdrLangSheet" role="menu" aria-label="Language">
+            <button type="button" class="hdr-lang-row active" data-site-lang="fr" role="menuitem">
+                <span class="hdr-lang-row-flag">🇫🇷</span>
+                <span class="hdr-lang-row-name">Français</span>
+                <span class="hdr-lang-row-mini">FR</span>
+            </button>
+            <button type="button" class="hdr-lang-row" data-site-lang="ar" role="menuitem">
+                <span class="hdr-lang-row-flag">🇩🇿</span>
+                <span class="hdr-lang-row-name">العربية</span>
+                <span class="hdr-lang-row-mini">AR</span>
+            </button>
+            <button type="button" class="hdr-lang-row" data-site-lang="en" role="menuitem">
+                <span class="hdr-lang-row-flag">🇬🇧</span>
+                <span class="hdr-lang-row-name">English</span>
+                <span class="hdr-lang-row-mini">EN</span>
+            </button>
+            <button type="button" class="hdr-lang-row" data-site-lang="es" role="menuitem">
+                <span class="hdr-lang-row-flag">🇪🇸</span>
+                <span class="hdr-lang-row-name">Español</span>
+                <span class="hdr-lang-row-mini">ES</span>
+            </button>
+            <button type="button" class="hdr-lang-row" data-site-lang="zh" role="menuitem">
+                <span class="hdr-lang-row-flag">🇨🇳</span>
+                <span class="hdr-lang-row-name">中文</span>
+                <span class="hdr-lang-row-mini">ZH</span>
+            </button>
+            <button type="button" class="hdr-lang-row" data-site-lang="ru" role="menuitem">
+                <span class="hdr-lang-row-flag">🇷🇺</span>
+                <span class="hdr-lang-row-name">Русский</span>
+                <span class="hdr-lang-row-mini">RU</span>
+            </button>
         </div>
     </div>
 
@@ -1630,6 +1876,7 @@
             </svg>
         </div>
         <div class="hdr-txt">
+            <div class="hdr-ar" lang="ar" dir="rtl">مديرية الإعلام والاتصال</div>
             <div class="hdr-t1">Direction de l'Information</div>
             <div class="hdr-t2">et de la Communication</div>
         </div>
@@ -1649,8 +1896,7 @@
 
     <div class="hero-content">
 
-        <p class="hero-republic-ar">الجمهورية الجزائرية الديمقراطية الشعبية</p>
-        <p class="hero-republic-fr">République Algérienne Démocratique et Populaire</p>
+        <p class="hero-republic-line" data-site-i18n="hero_republic">République Algérienne Démocratique et Populaire</p>
 
         <div class="div-gold" aria-hidden="true">
             <div class="dg-line"></div>
@@ -1658,10 +1904,9 @@
             <div class="dg-line r"></div>
         </div>
 
-        <h1 class="hero-ar">المتحف المركزي للجيش</h1>
-        <p class="hero-fr">Musée de l'armée centrale</p>
+        <h1 class="hero-title-line" data-site-i18n="hero_title">Musée de l'armée centrale</h1>
 
-        <p class="hero-desc">
+        <p class="hero-desc" data-site-i18n="hero_desc">
             Mémoire vivante de l'Armée Nationale Populaire —<br>
             un patrimoine d'honneur, de courage et d'histoire.
         </p>
@@ -1672,14 +1917,20 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M3 3h7v7H3zM5 5v3h3V5zM14 3h7v7h-7zM16 5v3h3V5zM3 14h7v7H3zM5 16v3h3v-3zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/>
                 </svg>
-                Scanner le QR
+                <span data-site-i18n="cta_scan">Scanner le QR</span>
             </button>
 
             <button class="hbtn hbtn-outline" onclick="goTo('sec-map')" type="button">
-                Commencer la visite
+                <span data-site-i18n="cta_visit">Commencer la visite</span>
             </button>
 
-            <a class="hbtn hbtn-outline hbtn-admin" href="{{ url('/admin/artifacts') }}">Administration</a>
+            @auth
+                @if(strtolower((string) auth()->user()->email) === strtolower((string) config('app.admin_email', 'admin@museum.local')))
+                    <a class="hbtn hbtn-outline hbtn-admin" href="{{ url('/admin/artifacts') }}">
+                        <span data-site-i18n="cta_admin">Administration</span>
+                    </a>
+                @endif
+            @endauth
 
         </div>
     </div>
@@ -1695,8 +1946,7 @@
 <section class="sec-org" id="sec-org">
 
     <div class="org-level">
-        <p class="org-ar">وزارة الدفاع الوطني</p>
-        <p class="org-fr">Ministère de la Défense Nationale</p>
+        <p class="org-line" data-site-i18n="org_lvl1">Ministère de la Défense Nationale</p>
     </div>
 
     <div class="org-sep" aria-hidden="true">
@@ -1706,8 +1956,7 @@
     </div>
 
     <div class="org-level">
-        <p class="org-ar">أركان الجيش الوطني الشعبي</p>
-        <p class="org-fr">État-major de l'Armée Nationale Populaire</p>
+        <p class="org-line" data-site-i18n="org_lvl2">État-major de l'Armée Nationale Populaire</p>
     </div>
 
     <div class="org-sep" aria-hidden="true">
@@ -1717,8 +1966,7 @@
     </div>
 
     <div class="org-level">
-        <p class="org-ar">مديرية الإعلام والاتصال</p>
-        <p class="org-fr">Direction de l'Information et de la Communication</p>
+        <p class="org-line" data-site-i18n="org_lvl3">Direction de l'Information et de la Communication</p>
     </div>
 
 </section>
@@ -1730,8 +1978,7 @@
 <section class="sec-map" id="sec-map">
     <div class="map-wrap">
         <div class="map-head">
-            <p class="map-ar">خريطة المتحف</p>
-            <p class="map-fr">Plan du Musée Central de l'Armée</p>
+            <p class="map-headline" data-site-i18n="map_title">Plan du Musée Central de l'Armée</p>
         </div>
 
         <div class="org-sep" aria-hidden="true" style="margin-top:0; margin-bottom:30px;">
@@ -1750,24 +1997,20 @@
             </div>
 
             <aside class="map-panel">
-                <h3>Niveaux</h3>
-                <p class="map-panel-hint">Sélectionnez un étage : le schéma à gauche et les points d’intérêt se mettent à jour.</p>
+                <h3 data-site-i18n="levels_title">Niveaux</h3>
+                <p class="map-panel-hint" data-site-i18n="levels_hint">Sélectionnez un étage : le schéma à gauche et les points d’intérêt se mettent à jour.</p>
                 <div class="map-floor-btns">
                     <button type="button" class="map-floor-btn active" data-floor="rdc" onclick="selectMuseumFloor('rdc')">
-                        <span class="map-floor-fr">RDC · Accueil & Expositions</span>
-                        <span class="map-floor-ar">الطابق الأرضي · الاستقبال والمعارض</span>
+                        <span class="map-floor-label" data-site-i18n="floor_rdc">RDC · Accueil & Expositions</span>
                     </button>
                     <button type="button" class="map-floor-btn" data-floor="e1" onclick="selectMuseumFloor('e1')">
-                        <span class="map-floor-fr">Étage 1 · Chronologie historique</span>
-                        <span class="map-floor-ar">الطابق 1 · الخط الزمني للتاريخ</span>
+                        <span class="map-floor-label" data-site-i18n="floor_e1">Étage 1 · Chronologie historique</span>
                     </button>
                     <button type="button" class="map-floor-btn" data-floor="e2" onclick="selectMuseumFloor('e2')">
-                        <span class="map-floor-fr">Étage 2 · Collections militaires</span>
-                        <span class="map-floor-ar">الطابق 2 · المجموعات العسكرية</span>
+                        <span class="map-floor-label" data-site-i18n="floor_e2">Étage 2 · Collections militaires</span>
                     </button>
                     <button type="button" class="map-floor-btn" data-floor="e3" onclick="selectMuseumFloor('e3')">
-                        <span class="map-floor-fr">Étage 3 · Archives & mémoire</span>
-                        <span class="map-floor-ar">الطابق 3 · الأرشيف والذاكرة</span>
+                        <span class="map-floor-label" data-site-i18n="floor_e3">Étage 3 · Archives & mémoire</span>
                     </button>
                 </div>
                 <p class="map-note" id="mapFloorNote">Parcours indicatif — les QR des salles complètent la visite.</p>
@@ -1788,10 +2031,9 @@
         <div class="fd-line r"></div>
     </div>
 
-    <p class="ftr-ar">المتحف المركزي للجيش</p>
-    <p class="ftr-fr">Musée de l'armée centrale</p>
+    <p class="ftr-title-line" data-site-i18n="footer_title">Musée de l'armée centrale</p>
 
-    <p class="ftr-copy">© {{ date('Y') }} · ANP — Direction de l'Information et de la Communication</p>
+    <p class="ftr-copy"><span class="ftr-cr">© {{ date('Y') }}</span> · <span data-site-i18n="footer_rights">ANP — Direction de l'Information et de la Communication</span></p>
 
 </footer>
 
@@ -1805,7 +2047,7 @@
     <div class="qr-box">
 
         <div class="qr-top">
-            <span class="qr-top-title" id="qrTitle">Scanner un code QR</span>
+            <span class="qr-top-title" id="qrTitle" data-site-i18n="qr_title">Scanner un code QR</span>
             <button class="qr-x" onclick="closeQr()" type="button" aria-label="Fermer">✕</button>
         </div>
 
@@ -1828,7 +2070,7 @@
                         <rect x="10" y="42" width="12" height="12" rx="1" stroke-width="1"/>
                         <path d="M40 40h6v6h-6zm8 0h6v6h-6zm-8 8h6v6h-6zm8 8h6v6h-6z" stroke-width="0.8"/>
                     </svg>
-                    <p>Appuyez sur "Activer la caméra"<br>pour scanner un objet du musée</p>
+                    <p id="qrIdleTxt" data-site-i18n="qr_idle_hint">Appuyez sur « Activer la caméra »<br>pour scanner un objet du musée</p>
                 </div>
 
                 <video id="qrVideo" autoplay playsinline muted></video>
@@ -1844,25 +2086,25 @@
             </div>
 
             <div class="qr-res" id="qrRes">
-                <div class="qr-res-lbl">Code détecté</div>
+                <div class="qr-res-lbl" id="qrResLbl" data-site-i18n="qr_code_label">Code détecté</div>
                 <div class="qr-res-val" id="qrResVal">—</div>
             </div>
 
-            <button id="qrBtn" onclick="startCam()" type="button">Activer la caméra</button>
+            <button id="qrBtn" onclick="startCam()" type="button" data-site-i18n="qr_activate">Activer la caméra</button>
 
             <div class="qr-alt">
-                <div class="qr-alt-lbl">Autres moyens</div>
+                <div class="qr-alt-lbl" data-site-i18n="qr_alternative">Autres moyens</div>
                 <div class="qr-alt-row">
                     <input type="text" id="qrManualId" placeholder="ex. artifact-001" autocomplete="off" autocapitalize="off">
-                    <button type="button" class="qr-alt-btn primary" onclick="tryManualQr()">Ouvrir</button>
+                    <button type="button" class="qr-alt-btn primary" onclick="tryManualQr()" data-site-i18n="qr_open">Ouvrir</button>
                 </div>
                 <div class="qr-alt-row">
                     <input type="file" id="qrFileInput" accept="image/*" onchange="onQrImageSelected(event)">
-                    <button type="button" class="qr-alt-btn" onclick="document.getElementById('qrFileInput').click()">Importer une image QR</button>
+                    <button type="button" class="qr-alt-btn" onclick="document.getElementById('qrFileInput').click()" data-site-i18n="qr_import">Importer une image QR</button>
                 </div>
             </div>
 
-            <p class="qr-note">Caméra ou image : le code doit correspondre à l’identifiant enregistré (ex. artifact-001).</p>
+            <p class="qr-note" data-site-i18n="qr_note">Caméra ou image : le code doit correspondre à l’identifiant enregistré (ex. artifact-001).</p>
 
         </div>
     </div>
@@ -1889,6 +2131,7 @@
             <button class="lang-btn"        onclick="setLang('fr')"  data-lang="fr">Français</button>
             <button class="lang-btn"        onclick="setLang('en')"  data-lang="en">English</button>
             <button class="lang-btn"        onclick="setLang('zh')"  data-lang="zh">中文</button>
+            <button class="lang-btn"        onclick="setLang('ru')"  data-lang="ru">Русский</button>
         </div>
 
         <button class="art-narrate" id="narrateBtn" onclick="toggleNarrate()" type="button">
@@ -1905,9 +2148,19 @@
 
     {{-- Body --}}
     <div class="art-body">
+        <div class="art-head">
+            <div class="art-head-top">
+                <div class="art-category" id="artCategory">— Objet de musée —</div>
+                <div class="art-date-line" id="artEpoque">—</div>
+            </div>
+            <h2 class="art-title ar-text" id="artTitle">…</h2>
+        </div>
 
         {{-- 3D Viewer --}}
         <div class="art-viewer">
+            <div class="art-image-stage" id="artImageStage" hidden>
+                <img id="artMainImage" class="art-main-image" src="" alt="Aperçu artefact">
+            </div>
             <model-viewer
                 id="artModelViewer"
                 camera-controls
@@ -1930,17 +2183,8 @@
             </div>
         </div>
 
-        {{-- Vertical gold divider (3rd column of grid) --}}
-        <div class="art-divider-v" aria-hidden="true"></div>
-
         {{-- Description Panel --}}
         <div class="art-desc-panel">
-
-            <div class="art-category" id="artCategory">— Objet de musée —</div>
-            <div class="art-divider"></div>
-
-            <h2 class="art-title ar-text" id="artTitle">…</h2>
-
             <p class="art-text ar-text" id="artDesc">…</p>
 
             <div class="art-meta" id="artMeta">
@@ -1949,15 +2193,15 @@
                     <span class="art-meta-val" id="artRef">—</span>
                 </div>
                 <div class="art-meta-row">
-                    <span class="art-meta-key">Époque</span>
-                    <span class="art-meta-val" id="artEpoque">—</span>
-                </div>
-                <div class="art-meta-row">
                     <span class="art-meta-key">Section</span>
                     <span class="art-meta-val" id="artSection">—</span>
                 </div>
             </div>
 
+        </div>
+
+        <div class="art-gallery-panel">
+            <div class="art-gallery-strip" id="artGallery"></div>
         </div>
     </div>
 </div>
@@ -1986,6 +2230,307 @@ function goTo(id) {
     var offset = header ? header.offsetHeight + 4 : 68;
     if (el) window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - offset, behavior:'smooth' });
 }
+
+/* ── Home page language switcher ───────────── */
+var SITE_LANG = 'fr';
+var SITE_LANG_META = {
+    fr: { label: 'Français', code: 'FR' },
+    ar: { label: 'العربية', code: 'AR' },
+    en: { label: 'English',  code: 'EN' },
+    es: { label: 'Español',  code: 'ES' },
+    zh: { label: '中文',      code: 'ZH' },
+    ru: { label: 'Русский',  code: 'RU' }
+};
+
+var SITE_LANG_HTML = {
+    fr: 'fr',
+    ar: 'ar',
+    en: 'en',
+    es: 'es',
+    zh: 'zh-CN',
+    ru: 'ru'
+};
+
+var CURRENT_MAP_FLOOR = 'rdc';
+
+var SITE_I18N = {
+    fr: {
+        hero_republic: 'République Algérienne Démocratique et Populaire',
+        hero_title: 'Musée de l\'armée centrale',
+        hero_desc: 'Mémoire vivante de l\'Armée Nationale Populaire —<br>un patrimoine d\'honneur, de courage et d\'histoire.',
+        cta_scan: 'Scanner le QR',
+        cta_visit: 'Commencer la visite',
+        cta_admin: 'Administration',
+        map_title: 'Plan du Musée Central de l\'Armée',
+        levels_title: 'Niveaux',
+        levels_hint: 'Sélectionnez un étage : le schéma à gauche et les points d’intérêt se mettent à jour.',
+        floor_rdc: 'RDC · Accueil & Expositions',
+        floor_e1: 'Étage 1 · Chronologie historique',
+        floor_e2: 'Étage 2 · Collections militaires',
+        floor_e3: 'Étage 3 · Archives & mémoire',
+        org_lvl1: 'Ministère de la Défense Nationale',
+        org_lvl2: 'État-major de l\'Armée Nationale Populaire',
+        org_lvl3: 'Direction de l\'Information et de la Communication',
+        footer_title: 'Musée de l\'armée centrale',
+        footer_rights: 'ANP — Direction de l\'Information et de la Communication',
+        qr_title: 'Scanner un code QR',
+        qr_activate: 'Activer la caméra',
+        qr_alternative: 'Autres moyens',
+        qr_open: 'Ouvrir',
+        qr_import: 'Importer une image QR',
+        qr_note: 'Caméra ou image : le code doit correspondre à l’identifiant enregistré (ex. artifact-001).',
+        qr_idle_hint: 'Appuyez sur « Activer la caméra »<br>pour scanner un objet du musée',
+        qr_code_label: 'Code détecté',
+        qr_status_idle: 'En attente'
+    },
+    ar: {
+        hero_republic: 'الجمهورية الجزائرية الديمقراطية الشعبية',
+        hero_title: 'المتحف المركزي للجيش',
+        hero_desc: 'ذاكرة حيّة للجيش الوطني الشعبي —<br>تراث من الشرف والشجاعة والتاريخ.',
+        cta_scan: 'مسح رمز QR',
+        cta_visit: 'ابدأ الزيارة',
+        cta_admin: 'الإدارة',
+        map_title: 'خريطة المتحف المركزي للجيش',
+        levels_title: 'الطوابق',
+        levels_hint: 'اختر طابقا: سيتم تحديث المخطط ونقاط الاهتمام.',
+        floor_rdc: 'الطابق الأرضي · الاستقبال والمعارض',
+        floor_e1: 'الطابق 1 · التسلسل التاريخي',
+        floor_e2: 'الطابق 2 · المجموعات العسكرية',
+        floor_e3: 'الطابق 3 · الأرشيف والذاكرة',
+        org_lvl1: 'وزارة الدفاع الوطني',
+        org_lvl2: 'أركان الجيش الوطني الشعبي',
+        org_lvl3: 'مديرية الإعلام والاتصال',
+        footer_title: 'المتحف المركزي للجيش',
+        footer_rights: 'الجيش الوطني الشعبي — مديرية الإعلام والاتصال',
+        qr_title: 'مسح رمز QR',
+        qr_activate: 'تفعيل الكاميرا',
+        qr_alternative: 'خيارات أخرى',
+        qr_open: 'فتح',
+        qr_import: 'استيراد صورة QR',
+        qr_note: 'باستخدام الكاميرا أو الصورة: يجب أن يطابق الرمز المعرّف المسجل (مثال: artifact-001).',
+        qr_idle_hint: 'اضغط « تفعيل الكاميرا »<br>لمسح قطعة في المتحف',
+        qr_code_label: 'الرمز المكتشف',
+        qr_status_idle: 'في الانتظار'
+    },
+    en: {
+        hero_republic: 'People\'s Democratic Republic of Algeria',
+        hero_title: 'Central Army Museum',
+        hero_desc: 'A living memory of the National People\'s Army —<br>a heritage of honor, courage, and history.',
+        cta_scan: 'Scan QR',
+        cta_visit: 'Start the tour',
+        cta_admin: 'Administration',
+        map_title: 'Central Army Museum Map',
+        levels_title: 'Levels',
+        levels_hint: 'Select a floor: the diagram and points of interest update instantly.',
+        floor_rdc: 'Ground Floor · Reception & Exhibitions',
+        floor_e1: 'Level 1 · Historical Timeline',
+        floor_e2: 'Level 2 · Military Collections',
+        floor_e3: 'Level 3 · Archives & Memory',
+        org_lvl1: 'Ministry of National Defence',
+        org_lvl2: 'General Staff of the National People\'s Army',
+        org_lvl3: 'Directorate of Information and Communication',
+        footer_title: 'Central Army Museum',
+        footer_rights: 'NPA — Directorate of Information and Communication',
+        qr_title: 'Scan a QR code',
+        qr_activate: 'Enable camera',
+        qr_alternative: 'Alternative methods',
+        qr_open: 'Open',
+        qr_import: 'Import QR image',
+        qr_note: 'Camera or image: the code must match a registered identifier (e.g. artifact-001).',
+        qr_idle_hint: 'Tap « Enable camera »<br>to scan a museum artifact',
+        qr_code_label: 'Code detected',
+        qr_status_idle: 'Idle'
+    },
+    es: {
+        hero_republic: 'República Argelina Democrática y Popular',
+        hero_title: 'Museo Central del Ejército',
+        hero_desc: 'Memoria viva del Ejército Nacional Popular —<br>un patrimonio de honor, valentía e historia.',
+        cta_scan: 'Escanear QR',
+        cta_visit: 'Comenzar la visita',
+        cta_admin: 'Administración',
+        map_title: 'Plano del Museo Central del Ejército',
+        levels_title: 'Niveles',
+        levels_hint: 'Seleccione una planta: el esquema y los puntos de interés se actualizan.',
+        floor_rdc: 'Planta baja · Recepción y exposiciones',
+        floor_e1: 'Planta 1 · Cronología histórica',
+        floor_e2: 'Planta 2 · Colecciones militares',
+        floor_e3: 'Planta 3 · Archivos y memoria',
+        org_lvl1: 'Ministerio de Defensa Nacional',
+        org_lvl2: 'Estado Mayor del Ejército Nacional Popular',
+        org_lvl3: 'Dirección de Información y Comunicación',
+        footer_title: 'Museo Central del Ejército',
+        footer_rights: 'ENP — Dirección de Información y Comunicación',
+        qr_title: 'Escanear un código QR',
+        qr_activate: 'Activar cámara',
+        qr_alternative: 'Otros métodos',
+        qr_open: 'Abrir',
+        qr_import: 'Importar imagen QR',
+        qr_note: 'Cámara o imagen: el código debe coincidir con un identificador registrado (ej. artifact-001).',
+        qr_idle_hint: 'Pulse « Activar cámara »<br>para escanear una pieza del museo',
+        qr_code_label: 'Código detectado',
+        qr_status_idle: 'En espera'
+    },
+    zh: {
+        hero_republic: '阿尔及利亚民主人民共和国',
+        hero_title: '中央军事博物馆',
+        hero_desc: '人民军队的鲜活记忆 —<br>荣誉、勇气与历史的传承。',
+        cta_scan: '扫描二维码',
+        cta_visit: '开始参观',
+        cta_admin: '管理',
+        map_title: '中央军事博物馆导览图',
+        levels_title: '楼层',
+        levels_hint: '选择楼层后，左侧路线和兴趣点将自动更新。',
+        floor_rdc: '一层 · 接待与展览',
+        floor_e1: '二层 · 历史时间线',
+        floor_e2: '三层 · 军事藏品',
+        floor_e3: '四层 · 档案与记忆',
+        org_lvl1: '国防部',
+        org_lvl2: '人民军总参谋部',
+        org_lvl3: '新闻与通讯司',
+        footer_title: '中央军事博物馆',
+        footer_rights: '人民军 — 新闻与通讯司',
+        qr_title: '扫描二维码',
+        qr_activate: '启用摄像头',
+        qr_alternative: '其他方式',
+        qr_open: '打开',
+        qr_import: '导入二维码图片',
+        qr_note: '使用摄像头或图片：二维码需匹配已登记的标识（如 artifact-001）。',
+        qr_idle_hint: '点击「启用摄像头」<br>扫描馆内展品',
+        qr_code_label: '已识别代码',
+        qr_status_idle: '待命'
+    },
+    ru: {
+        hero_republic: 'Алжирская Народная Демократическая Республика',
+        hero_title: 'Центральный музей армии',
+        hero_desc: 'Живая память Национальной народной армии —<br>наследие чести, мужества и истории.',
+        cta_scan: 'Сканировать QR',
+        cta_visit: 'Начать посещение',
+        cta_admin: 'Администрирование',
+        map_title: 'Карта Центрального музея армии',
+        levels_title: 'Этажи',
+        levels_hint: 'Выберите этаж: схема и точки интереса обновятся автоматически.',
+        floor_rdc: '1-й этаж · Прием и экспозиции',
+        floor_e1: '2-й этаж · Историческая хронология',
+        floor_e2: '3-й этаж · Военные коллекции',
+        floor_e3: '4-й этаж · Архивы и память',
+        org_lvl1: 'Министерство национальной обороны',
+        org_lvl2: 'Генеральный штаб Народной национальной армии',
+        org_lvl3: 'Управление информации и связи',
+        footer_title: 'Центральный музей армии',
+        footer_rights: 'ННА — Управление информации и связи',
+        qr_title: 'Сканировать QR-код',
+        qr_activate: 'Включить камеру',
+        qr_alternative: 'Другие способы',
+        qr_open: 'Открыть',
+        qr_import: 'Импортировать QR-изображение',
+        qr_note: 'Камера или изображение: код должен соответствовать зарегистрированному идентификатору (например, artifact-001).',
+        qr_idle_hint: 'Нажмите « Включить камеру », <br>чтобы отсканировать экспонат',
+        qr_code_label: 'Код обнаружен',
+        qr_status_idle: 'Ожидание'
+    }
+};
+
+function qrStatusIdleMsg() {
+    var dict = SITE_I18N[SITE_LANG] || SITE_I18N.fr;
+    return dict.qr_status_idle || '…';
+}
+
+function pickArtifactLangCode() {
+    if (!CURRENT_ARTIFACT) return SITE_LANG || 'fr';
+    if (CURRENT_ARTIFACT[SITE_LANG]) return SITE_LANG;
+    var order = ['fr', 'ar', 'en', 'es', 'zh', 'ru'];
+    var i;
+    for (i = 0; i < order.length; i++) {
+        var c = order[i];
+        if (CURRENT_ARTIFACT[c]) return c;
+    }
+    return 'en';
+}
+
+function refreshMuseumMapForLang() {
+    if (typeof selectMuseumFloor === 'function') {
+        selectMuseumFloor(CURRENT_MAP_FLOOR);
+    }
+}
+
+function setSiteLang(lang) {
+    var dict = SITE_I18N[lang];
+    if (!dict) lang = 'fr';
+    SITE_LANG = lang;
+    dict = SITE_I18N[SITE_LANG];
+
+    document.querySelectorAll('[data-site-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-site-i18n');
+        if (!key || !dict[key]) return;
+        el.innerHTML = dict[key];
+    });
+
+    document.body.classList.toggle('site-lang-ar', SITE_LANG === 'ar');
+    document.documentElement.lang = SITE_LANG_HTML[SITE_LANG] || 'fr';
+
+    try {
+        localStorage.setItem('musescan_site_lang', SITE_LANG);
+    } catch (err) { /* ignore */ }
+
+    var codeEl = document.getElementById('hdrLangCode');
+    var meta = SITE_LANG_META[SITE_LANG] || SITE_LANG_META.fr;
+    if (codeEl) codeEl.textContent = meta.code;
+
+    document.querySelectorAll('.hdr-lang-row[data-site-lang]').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-site-lang') === SITE_LANG);
+    });
+
+    if (typeof CURRENT_ARTIFACT !== 'undefined' && CURRENT_ARTIFACT) {
+        CURRENT_LANG = pickArtifactLangCode();
+        _applyLang(CURRENT_LANG);
+    }
+
+    refreshMuseumMapForLang();
+
+    var qrDot = document.getElementById('qrDot');
+    var qrMsg = document.getElementById('qrMsg');
+    if (qrDot && qrMsg && qrDot.className === 'qr-dot' && !qrDot.classList.contains('scanning') && !qrDot.classList.contains('ok') && !qrDot.classList.contains('err')) {
+        qrMsg.textContent = qrStatusIdleMsg();
+    }
+}
+
+function initHdrSiteLang() {
+    var wrap = document.getElementById('hdrSiteLang');
+    var toggle = document.getElementById('hdrLangBtn');
+    var sheet = document.getElementById('hdrLangSheet');
+    if (!wrap || !toggle || !sheet) return;
+
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var opened = wrap.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+    });
+
+    sheet.querySelectorAll('[data-site-lang]').forEach(function(btn) {
+        btn.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            setSiteLang(btn.getAttribute('data-site-lang'));
+            wrap.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
+        });
+    });
+
+    document.addEventListener('click', function(ev) {
+        if (!wrap.contains(ev.target)) {
+            wrap.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    var initial = 'fr';
+    try {
+        var st = localStorage.getItem('musescan_site_lang');
+        if (st && SITE_I18N[st]) initial = st;
+    } catch (e2) { /* ignore */ }
+    setSiteLang(initial);
+}
+
+document.addEventListener('DOMContentLoaded', initHdrSiteLang);
 
 /* ── Modal ─────────────────────────────── */
 function openQr() {
@@ -2219,6 +2764,8 @@ function onQrImageSelected(ev) {
 /* QR non reconnu: contenu de secours */
 var ARTIFACT_FALLBACK = {
     modelSrc : '',
+    mainImage: '',
+    galleryImages: [],
     category : 'Collection du musée · مجموعة المتحف',
     ref      : '—',
     epoque   : '—',
@@ -2227,12 +2774,14 @@ var ARTIFACT_FALLBACK = {
     es: { title: 'Pieza de museo', desc : 'Esta pieza forma parte de la colección histórica del Museo Central del Ejército Nacional Popular. Consulte a un miembro del personal para obtener más información.' },
     fr: { title: 'Pièce de musée', desc : 'Cette pièce fait partie de la collection historique du Musée Central de l\'Armée Nationale Populaire. Veuillez vous adresser à un membre du personnel pour plus d\'informations.' },
     en: { title: 'Museum Artifact', desc : 'This item is part of the historical collection of the Central Museum of the National People\'s Army. Please consult a staff member for more information.' },
-    zh: { title: '博物馆文物', desc : '该文物是人民军队中央博物馆历史馆藏的一部分。请向工作人员咨询更多信息。' }
+    zh: { title: '博物馆文物', desc : '该文物是人民军队中央博物馆历史馆藏的一部分。请向工作人员咨询更多信息。' },
+    ru: { title: 'Музейный экспонат', desc : 'Этот экспонат является частью исторической коллекции Центрального музея Национальной народной армии. Обратитесь к сотруднику музея для получения дополнительной информации.' }
 };
 
 /* 变量 */
 var CURRENT_ARTIFACT = null;
-var CURRENT_LANG     = 'ar';
+var CURRENT_LANG     = 'fr';
+var CURRENT_GALLERY  = [];
 var NARRATING        = false;
 
 /* Code détecté — ouvre l'overlay artefact */
@@ -2264,7 +2813,6 @@ function rescan() {
 async function openArtifact(qrVal) {
     var data = await fetchArtifactByQr(qrVal);
     CURRENT_ARTIFACT = data || ARTIFACT_FALLBACK;
-    CURRENT_LANG     = 'ar';
     NARRATING        = false;
 
     /* 3D model */
@@ -2278,14 +2826,21 @@ async function openArtifact(qrVal) {
         ph.classList.remove('hidden');
     }
 
+    CURRENT_GALLERY = Array.isArray(CURRENT_ARTIFACT.galleryImages) ? CURRENT_ARTIFACT.galleryImages.slice() : [];
+    if (CURRENT_ARTIFACT.mainImage && CURRENT_GALLERY.indexOf(CURRENT_ARTIFACT.mainImage) === -1) {
+        CURRENT_GALLERY.unshift(CURRENT_ARTIFACT.mainImage);
+    }
+    setMainArtifactImage(CURRENT_ARTIFACT.mainImage || CURRENT_GALLERY[0] || '');
+    renderArtifactGallery(CURRENT_GALLERY);
+
     /* Meta */
     document.getElementById('artCategory').textContent = CURRENT_ARTIFACT.category;
     document.getElementById('artRef').textContent      = CURRENT_ARTIFACT.ref;
     document.getElementById('artEpoque').textContent   = CURRENT_ARTIFACT.epoque;
     document.getElementById('artSection').textContent  = CURRENT_ARTIFACT.section;
 
-    /* Language default = Arabic */
-    _applyLang('ar');
+    CURRENT_LANG = pickArtifactLangCode();
+    _applyLang(CURRENT_LANG);
 
     /* Narration button reset */
     var nb = document.getElementById('narrateBtn');
@@ -2315,7 +2870,48 @@ function closeArtifact() {
     stopNarration();
     document.getElementById('artOverlay').classList.remove('open');
     document.body.style.overflow = '';
+    setMainArtifactImage('');
+    renderArtifactGallery([]);
     LAST = null; /* Allow rescanning same code */
+}
+
+function setMainArtifactImage(src) {
+    var stage = document.getElementById('artImageStage');
+    var img = document.getElementById('artMainImage');
+    if (!stage || !img) return;
+
+    if (!src) {
+        img.src = '';
+        stage.hidden = true;
+        return;
+    }
+
+    img.src = src;
+    stage.hidden = false;
+}
+
+function renderArtifactGallery(images) {
+    var strip = document.getElementById('artGallery');
+    if (!strip) return;
+
+    strip.innerHTML = '';
+
+    if (!Array.isArray(images) || images.length <= 1) return;
+
+    images.forEach(function(src, idx) {
+        var thumb = document.createElement('img');
+        thumb.className = 'art-gallery-thumb' + (idx === 0 ? ' active' : '');
+        thumb.src = src;
+        thumb.alt = 'Vue artefact ' + (idx + 1);
+        thumb.addEventListener('click', function() {
+            setMainArtifactImage(src);
+            strip.querySelectorAll('.art-gallery-thumb').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            thumb.classList.add('active');
+        });
+        strip.appendChild(thumb);
+    });
 }
 
 function setLang(lang) {
@@ -2351,7 +2947,8 @@ var LANG_BCP47 = {
     es : 'es-ES',
     fr : 'fr-FR',
     en : 'en-US',
-    zh : 'zh-CN'
+    zh : 'zh-CN',
+    ru : 'ru-RU'
 };
 
 function toggleNarrate() {
@@ -2411,10 +3008,11 @@ function resetUi() {
     var btn = document.getElementById('qrBtn');
     btn.style.display = 'block';
     btn.disabled      = false;
-    btn.textContent   = 'Activer la caméra';
+    var qa = SITE_I18N[SITE_LANG] || SITE_I18N.fr;
+    btn.textContent   = qa.qr_activate;
     btn.onclick       = startCam;
 
-    setStatus('idle', 'En attente');
+    setStatus('idle', qrStatusIdleMsg());
 }
 
 /* Helper status UI */
@@ -2440,78 +3038,362 @@ function setStatus(type, msg) {
 }
 
 /* ── Plan du musée : parcours par étage ── */
-var MUSEUM_FLOOR_DATA = {
+var MUSEUM_FLOOR_GEOM = {
     rdc: {
-        title: 'Parcours — Rez-de-chaussée',
         path: 'M18,70 L22,36 C28,18 48,18 56,30 C64,42 52,52 66,58 C76,64 82,44 88,38',
-        note: 'Hall d’accueil, orientation et accès aux expositions du niveau principal.',
         points: [
-            { top: '24%', left: '26%', ar: 'الاستقبال والتذاكر', fr: 'Accueil & billetterie' },
-            { top: '36%', left: '48%', ar: 'لوحة المعلومات', fr: 'Panneau d’orientation' },
-            { top: '50%', left: '34%', ar: 'المتجر', fr: 'Boutique & catalogues' },
-            { top: '58%', left: '64%', ar: 'العرض المؤقت', fr: 'Salle d’exposition temporaire' },
-            { top: '44%', left: '78%', ar: 'السلالم والمصعد', fr: 'Escaliers & ascenseur' }
+            { top: '24%', left: '26%' },
+            { top: '36%', left: '48%' },
+            { top: '50%', left: '34%' },
+            { top: '58%', left: '64%' },
+            { top: '44%', left: '78%' },
         ]
     },
     e1: {
-        title: 'Parcours — Chronologie (étage 1)',
         path: 'M14,58 Q32,24 54,34 Q68,40 78,52 L86,36',
-        note: 'Frise chronologique et salles thématiques de l’histoire militaire nationale.',
         points: [
-            { top: '26%', left: '22%', ar: 'ما قبل الاستعمار', fr: 'Pré-colonial & réformes' },
-            { top: '34%', left: '44%', ar: 'المرحلة الاستعمارية', fr: 'Période coloniale' },
-            { top: '46%', left: '58%', ar: 'جبهة التحرير', fr: 'Guerre de libération' },
-            { top: '56%', left: '36%', ar: 'الاستقلال', fr: 'Indépendance & ANP' },
-            { top: '40%', left: '76%', ar: 'قاعة الوثائق', fr: 'Salle documents & cartes' }
+            { top: '26%', left: '22%' },
+            { top: '34%', left: '44%' },
+            { top: '46%', left: '58%' },
+            { top: '56%', left: '36%' },
+            { top: '40%', left: '76%' },
         ]
     },
     e2: {
-        title: 'Parcours — Collections (étage 2)',
         path: 'M20,68 C28,40 40,28 56,36 S78,48 84,32',
-        note: 'Uniformes, armements légers, insignes et matériel de terrain présentés par époque.',
         points: [
-            { top: '28%', left: '30%', ar: 'الأزياء العسكرية', fr: 'Uniformes & décorations' },
-            { top: '40%', left: '52%', ar: 'الأسلحة الخفيفة', fr: 'Armes légères' },
-            { top: '52%', left: '40%', ar: 'المعدات الميدانية', fr: 'Équipement de campagne' },
-            { top: '38%', left: '72%', ar: 'الوسائل المدرعة', fr: 'Maquettes véhicules' },
-            { top: '62%', left: '58%', ar: 'زاوية تفاعلية', fr: 'Espace tactile enfants' }
+            { top: '28%', left: '30%' },
+            { top: '40%', left: '52%' },
+            { top: '52%', left: '40%' },
+            { top: '38%', left: '72%' },
+            { top: '62%', left: '58%' },
         ]
     },
     e3: {
-        title: 'Parcours — Archives & mémoire (étage 3)',
         path: 'M16,62 L28,32 Q48,20 62,38 Q74,52 88,44',
-        note: 'Archives photographiques, témoignages et espace de recherche pour le public averti.',
         points: [
-            { top: '30%', left: '24%', ar: 'أرشيف الصور', fr: 'Photothèque' },
-            { top: '42%', left: '46%', ar: 'شهادات حية', fr: 'Témoignages audio' },
-            { top: '54%', left: '34%', ar: 'قاعة البحث', fr: 'Salle de consultation' },
-            { top: '48%', left: '70%', ar: 'الرموز والأعلام', fr: 'Drapeaux & emblèmes' },
-            { top: '64%', left: '56%', ar: 'خصومات للمجموعات', fr: 'Réservation groupes' }
+            { top: '30%', left: '24%' },
+            { top: '42%', left: '46%' },
+            { top: '54%', left: '34%' },
+            { top: '48%', left: '70%' },
+            { top: '64%', left: '56%' },
         ]
-    }
+    },
+};
+
+var MUSEUM_FLOOR_LABELS = {
+    fr: {
+        rdc: {
+            title: 'Parcours — Rez-de-chaussée',
+            note: 'Hall d\'accueil, orientation et accès aux expositions du niveau principal.',
+            points: [
+                'Accueil & billetterie',
+                'Panneau d\'orientation',
+                'Boutique & catalogues',
+                'Salle d\'exposition temporaire',
+                'Escaliers & ascenseur',
+            ]
+        },
+        e1: {
+            title: 'Parcours — Chronologie (étage 1)',
+            note: 'Frise chronologique et salles thématiques de l\'histoire militaire nationale.',
+            points: [
+                'Pré-colonial & réformes',
+                'Période coloniale',
+                'Guerre de libération',
+                'Indépendance & ANP',
+                'Salle documents & cartes',
+            ]
+        },
+        e2: {
+            title: 'Parcours — Collections (étage 2)',
+            note: 'Uniformes, armements légers, insignes et matériel de terrain présentés par époque.',
+            points: [
+                'Uniformes & décorations',
+                'Armes légères',
+                'Équipement de campagne',
+                'Maquettes véhicules',
+                'Espace tactile enfants',
+            ]
+        },
+        e3: {
+            title: 'Parcours — Archives & mémoire (étage 3)',
+            note: 'Archives photographiques, témoignages et espace de recherche pour le public averti.',
+            points: [
+                'Photothèque',
+                'Témoignages audio',
+                'Salle de consultation',
+                'Drapeaux & emblèmes',
+                'Réservation groupes',
+            ]
+        },
+    },
+    ar: {
+        rdc: {
+            title: 'المسار — الطابق الأرضي',
+            note: 'قاعة الاستقبال والتوجيه والوصول إلى معارض المستوى الرئيسي.',
+            points: [
+                'الاستقبال والتذاكر',
+                'لوحة المعلومات',
+                'المتجر',
+                'العرض المؤقت',
+                'السلالم والمصعد',
+            ]
+        },
+        e1: {
+            title: 'المسار — الخط الزمني (طابق 1)',
+            note: 'الخط الزمني وقاعات مواضيع التاريخ العسكري الوطني.',
+            points: [
+                'ما قبل الاستعمار',
+                'المرحلة الاستعمارية',
+                'جبهة التحرير',
+                'الاستقلال',
+                'قاعة الوثائق',
+            ]
+        },
+        e2: {
+            title: 'المسار — المجموعات (طابق 2)',
+            note: 'الأزياء والأسلحة الخفيفة والشارات والمعدات الميدانية حسب الحقبة.',
+            points: [
+                'الأزياء العسكرية',
+                'الأسلحة الخفيفة',
+                'المعدات الميدانية',
+                'الوسائل المدرعة',
+                'زاوية تفاعلية',
+            ]
+        },
+        e3: {
+            title: 'المسار — الأرشيف والذاكرة (طابق 3)',
+            note: 'أرشيف الصور، شهود حيّون ومساحة بحث للجمهور المتخصص.',
+            points: [
+                'أرشيف الصور',
+                'شهادات حية',
+                'قاعة البحث',
+                'الرموز والأعلام',
+                'خصومات للمجموعات',
+            ]
+        },
+    },
+    en: {
+        rdc: {
+            title: 'Route — Ground floor',
+            note: 'Welcome hall, orientation and access to the main exhibitions.',
+            points: [
+                'Reception & tickets',
+                'Orientation panel',
+                'Shop & catalogs',
+                'Temporary exhibition hall',
+                'Stairs & elevator',
+            ]
+        },
+        e1: {
+            title: 'Route — Timeline (floor 1)',
+            note: 'Chronological displays and thematic rooms on national military history.',
+            points: [
+                'Pre-colonial era',
+                'Colonial period',
+                'War of liberation',
+                'Independence & NPA',
+                'Documents & maps room',
+            ]
+        },
+        e2: {
+            title: 'Route — Collections (floor 2)',
+            note: 'Uniforms, light weapons, insignia and field equipment by period.',
+            points: [
+                'Uniforms & decorations',
+                'Light weapons',
+                'Field equipment',
+                'Vehicle models',
+                'Children\'s tactile corner',
+            ]
+        },
+        e3: {
+            title: 'Route — Archives & memory (floor 3)',
+            note: 'Photo archives, audio testimonies and a research area for keen visitors.',
+            points: [
+                'Photo library',
+                'Audio testimonies',
+                'Study room',
+                'Flags & emblems',
+                'Group bookings',
+            ]
+        },
+    },
+    es: {
+        rdc: {
+            title: 'Recorrido — Planta baja',
+            note: 'Hall de bienvenida, orientación y acceso a las exposiciones principales.',
+            points: [
+                'Recepción y taquillas',
+                'Panel de orientación',
+                'Tienda y catálogos',
+                'Sala de exposición temporal',
+                'Escaleras y ascensor',
+            ]
+        },
+        e1: {
+            title: 'Recorrido — Cronología (planta 1)',
+            note: 'Friso cronológico y salas temáticas sobre la historia militar nacional.',
+            points: [
+                'Pre colonial y reformas',
+                'Periodo colonial',
+                'Guerra de liberación',
+                'Independencia y ENP',
+                'Sala de documentos y mapas',
+            ]
+        },
+        e2: {
+            title: 'Recorrido — Colecciones (planta 2)',
+            note: 'Uniformes, armas ligeras, insignias y equipo de campaña por época.',
+            points: [
+                'Uniformes y condecoraciones',
+                'Armas ligeras',
+                'Equipo de campaña',
+                'Maquetas de vehículos',
+                'Zona táctil infantil',
+            ]
+        },
+        e3: {
+            title: 'Recorrido — Archivos y memoria (planta 3)',
+            note: 'Archivo fotográfico, testimonios en audio y sala de investigación.',
+            points: [
+                'Fototeca',
+                'Testimonios de audio',
+                'Sala de consulta',
+                'Banderas y emblemas',
+                'Reservas para grupos',
+            ]
+        },
+    },
+    zh: {
+        rdc: {
+            title: '参观路线 — 一层',
+            note: '迎宾大厅、导览信息与主展区通道。',
+            points: [
+                '票务与问询',
+                '导览指示牌',
+                '文创商店与目录',
+                '临时展厅',
+                '楼梯与电梯',
+            ]
+        },
+        e1: {
+            title: '参观路线 — 二层（年代线）',
+            note: '国家军事史主题展陈与时间轴。',
+            points: [
+                '殖民前与变革',
+                '殖民时期',
+                '解放战争',
+                '独立与人军',
+                '文献与地图厅',
+            ]
+        },
+        e2: {
+            title: '参观路线 — 三层（藏品）',
+            note: '各时期军服、轻武器、徽章与野战装备。',
+            points: [
+                '军服与勋章',
+                '轻武器',
+                '野战装备',
+                '车辆模型',
+                '儿童互动角',
+            ]
+        },
+        e3: {
+            title: '参观路线 — 四层（档案与记忆）',
+            note: '影像档案、口述史料与研习空间。',
+            points: [
+                '影像资料库',
+                '口述历史',
+                '查阅室',
+                '旗帜与徽标',
+                '团体预约',
+            ]
+        },
+    },
+    ru: {
+        rdc: {
+            title: 'Маршрут — 1-й этаж',
+            note: 'Вестибюль, навигация и доступ к основным экспозициям.',
+            points: [
+                'Прием и билеты',
+                'Информационный стенд',
+                'Сувениры и каталоги',
+                'Зал временных выставок',
+                'Лестницы и лифт',
+            ]
+        },
+        e1: {
+            title: 'Маршрут — Хронология (2-й этаж)',
+            note: 'Хронология и тематические залы национальной военной истории.',
+            points: [
+                'Доколониальный период',
+                'Колониальный период',
+                'Война за освобождение',
+                'Независимость и ННА',
+                'Зал документов и карт',
+            ]
+        },
+        e2: {
+            title: 'Маршрут — Коллекции (3-й этаж)',
+            note: 'Формы, стрелковое оружие, знаки различия и полевое снаряжение по эпохам.',
+            points: [
+                'Форма и награды',
+                'Стрелковое оружие',
+                'Полевое снаряжение',
+                'Макеты техники',
+                'Детский интерактив',
+            ]
+        },
+        e3: {
+            title: 'Маршрут — Архивы и память (4-й этаж)',
+            note: 'Фотоархив, аудиосвидетельства и зона для исследователей.',
+            points: [
+                'Фототека',
+                'Аудиосвидетельства',
+                'Читальный зал',
+                'Флаги и эмблемы',
+                'Групповые экскурсии',
+            ]
+        },
+    },
 };
 
 function selectMuseumFloor(key) {
-    var d = MUSEUM_FLOOR_DATA[key];
-    if (!d) return;
+    CURRENT_MAP_FLOOR = key;
+    var geom = MUSEUM_FLOOR_GEOM[key];
+    if (!geom) return;
+
+    var lang = SITE_LANG;
+    var lblPack = MUSEUM_FLOOR_LABELS[lang] || MUSEUM_FLOOR_LABELS.fr;
+    var lbl = lblPack[key];
 
     var titleEl = document.getElementById('mapBoardTitle');
     var pathEl = document.getElementById('mapRoutePath');
     var layer = document.getElementById('mapPointsLayer');
     var noteEl = document.getElementById('mapFloorNote');
 
-    if (titleEl) titleEl.textContent = d.title;
-    if (pathEl) pathEl.setAttribute('d', d.path);
-    if (noteEl) noteEl.textContent = d.note;
+    if (titleEl && lbl) titleEl.textContent = lbl.title;
+    if (pathEl) pathEl.setAttribute('d', geom.path);
+    if (noteEl && lbl) noteEl.textContent = lbl.note;
 
-    if (layer) {
+    if (layer && lbl && geom.points) {
         layer.innerHTML = '';
-        d.points.forEach(function(p) {
+        geom.points.forEach(function(pos, idx) {
+            var text = lbl.points[idx] || '';
             var wrap = document.createElement('div');
             wrap.className = 'map-point';
-            wrap.style.top = p.top;
-            wrap.style.left = p.left;
-            wrap.innerHTML = '<span class="map-point-dot"></span><div class="map-point-label"><span class="map-point-name-ar">' + p.ar + '</span><span class="map-point-name-fr">' + p.fr + '</span></div>';
+            wrap.style.top = pos.top;
+            wrap.style.left = pos.left;
+            var label = document.createElement('div');
+            label.className = 'map-point-label';
+            var name = document.createElement('span');
+            name.className = 'map-point-name';
+            name.textContent = text;
+            label.appendChild(name);
+            wrap.innerHTML = '<span class="map-point-dot"></span>';
+            wrap.appendChild(label);
             layer.appendChild(wrap);
         });
     }
@@ -2529,10 +3411,6 @@ function selectMuseumFloor(key) {
         });
     }
 })();
-
-document.addEventListener('DOMContentLoaded', function() {
-    selectMuseumFloor('rdc');
-});
 
 </script>
 

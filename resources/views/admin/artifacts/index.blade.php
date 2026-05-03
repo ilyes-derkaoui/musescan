@@ -1,256 +1,388 @@
+{{-- resources/views/admin/artifacts/index.blade.php --}}
 @extends('admin.layout')
 
-@section('title', 'Artefacts')
+@section('title','Artefacts')
 
 @push('styles')
 <style>
-    .page-head {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 16px;
-        margin-bottom: 24px;
-    }
-    .page-head h1 {
-        font-family: 'Cinzel', serif;
-        font-size: clamp(22px, 3vw, 28px);
-        font-weight: 600;
-        color: var(--gold);
-    }
-    .page-head p { color: var(--muted); margin-top: 6px; font-size: 15px; max-width: 520px; }
-    .toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-    }
-    .search-wrap {
-        position: relative;
-    }
-    .search-wrap input {
-        width: 220px;
-        max-width: 100%;
-        padding: 10px 14px 10px 36px;
-        border: 1px solid var(--gold-dim);
-        border-radius: 8px;
-        background: rgba(0,0,0,0.25);
-        color: var(--text);
-        font-size: 14px;
-    }
-    .search-wrap input:focus { outline: none; border-color: rgba(200,168,75,0.55); }
-    .search-wrap::before {
-        content: '⌕';
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 0.45;
-        font-size: 16px;
-    }
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 10px 18px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 14px;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
-        transition: transform 0.12s, box-shadow 0.12s, background 0.15s;
-    }
-    .btn-primary {
-        background: linear-gradient(135deg, #c8a84b, #a88b3d);
-        color: #1c1406;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.35);
-    }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,168,75,0.2); }
-    .btn-ghost {
-        background: rgba(200,168,75,0.08);
-        color: var(--gold);
-        border: 1px solid var(--gold-dim);
-    }
-    .btn-ghost:hover { background: rgba(200,168,75,0.14); }
-    .btn-danger {
-        background: rgba(220,38,38,0.2);
-        color: #fecaca;
-        border: 1px solid rgba(220,38,38,0.45);
-    }
-    .btn-danger:hover { background: rgba(220,38,38,0.35); }
-    .btn-sm { padding: 8px 12px; font-size: 13px; }
-    .flash {
-        padding: 12px 16px;
-        border-radius: 8px;
-        margin-bottom: 18px;
-        background: rgba(34,197,94,0.12);
-        border: 1px solid rgba(34,197,94,0.35);
-        color: #bbf7d0;
-        font-size: 14px;
-    }
-    .table-card {
-        border: 1px solid var(--gold-dim);
-        border-radius: 12px;
-        overflow: hidden;
-        background: var(--panel);
-        box-shadow: 0 16px 40px rgba(0,0,0,0.25);
-    }
-    .table-scroll { overflow-x: auto; }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 720px;
-    }
-    th {
-        text-align: left;
-        padding: 14px 16px;
-        font-family: 'Cinzel', serif;
-        font-size: 10px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: rgba(200,168,75,0.55);
-        background: rgba(0,0,0,0.2);
-        border-bottom: 1px solid var(--gold-dim);
-    }
-    td {
-        padding: 14px 16px;
-        border-bottom: 1px solid rgba(200,168,75,0.1);
-        font-size: 14px;
-        vertical-align: middle;
-    }
-    tbody tr {
-        transition: background 0.15s;
-    }
-    tbody tr:hover { background: rgba(200,168,75,0.06); }
-    tbody tr.hidden { display: none; }
-    .chip {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 600;
-        background: rgba(200,168,75,0.12);
-        color: var(--gold);
-    }
-    .qr-preview {
-        width: 52px;
-        height: 52px;
-        object-fit: contain;
-        border-radius: 8px;
-        border: 1px solid var(--gold-dim);
-        padding: 4px;
-        background: #fff;
-    }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
-    .mono { font-family: ui-monospace, monospace; font-size: 13px; color: rgba(232,228,217,0.85); }
-    .pagination-wrap { margin-top: 20px; }
-    .pagination-wrap nav { display: flex; justify-content: center; }
-    .pagination-wrap a, .pagination-wrap span {
-        display: inline-block;
-        margin: 0 4px;
-        padding: 8px 12px;
-        border-radius: 6px;
-        color: var(--muted);
-        text-decoration: none;
-        border: 1px solid transparent;
-    }
-    .pagination-wrap a:hover { border-color: var(--gold-dim); color: var(--text); }
-    .pagination-wrap span[aria-current="page"] {
-        background: rgba(200,168,75,0.2);
-        color: var(--gold);
-        border-color: var(--gold-dim);
-    }
+/* ── Toolbar ──────────────────── */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* ── Mobile card view ─────────── */
+.artifact-cards{
+  display:none;
+  flex-direction:column;
+  gap:12px;
+}
+.artifact-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:16px;
+  display:flex;gap:14px;align-items:flex-start;
+  transition:border-color .18s;
+}
+.artifact-card:hover{border-color:rgba(200,168,75,.25)}
+.artifact-card-qr{
+  width:56px;height:56px;flex-shrink:0;
+  object-fit:contain;
+  border-radius:6px;
+  border:1px solid rgba(200,168,75,.18);
+  padding:4px;background:#fff;
+}
+.artifact-card-body{flex:1;min-width:0}
+.artifact-card-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:5px}
+.artifact-card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.artifact-card-meta span{font-size:12px;color:var(--muted)}
+.artifact-card-actions{display:flex;flex-wrap:wrap;gap:6px}
+
+/* ── Responsive: show cards on mobile ── */
+@media(max-width:720px){
+  .artifact-cards{display:flex}
+  .card.table-card{display:none}
+}
+
+/* ── Count badge ─────────────── */
+.count-badge{
+  font-family:'Courier New',monospace;
+  font-size:11px;font-weight:700;
+  padding:3px 8px;border-radius:999px;
+  background:rgba(200,168,75,.1);color:var(--gold);
+  margin-left:6px;
+}
+
+/* ── Floor indicator ─────────── */
+.floor-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;
+  border-radius:6px;
+  background:rgba(200,168,75,.08);
+  border:1px solid rgba(200,168,75,.18);
+  font-family:var(--fc);font-size:10px;
+  color:var(--gold-lt);font-weight:600;
+}
+
+/* ── Skeleton loading ─────────── */
+.skeleton{
+  background:linear-gradient(90deg,rgba(200,168,75,.04) 25%,rgba(200,168,75,.08) 50%,rgba(200,168,75,.04) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.5s infinite;
+  border-radius:4px;
+}
+@keyframes shimmer{
+  from{background-position:200% 0}
+  to{background-position:-200% 0}
+}
+
+/* ── Empty row ─────────────────── */
+.td-empty{text-align:center;padding:60px 24px!important}
+
+/* ── Filter bar ─────────────────── */
+.filter-bar{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-bottom:20px;
+  align-items:center;
+}
+.filter-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:999px;
+  font-size:12px;font-weight:500;
+  border:1px solid var(--border);
+  background:transparent;color:var(--muted);
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.filter-btn:hover{border-color:rgba(200,168,75,.3);color:var(--text)}
+.filter-btn.active{
+  background:rgba(200,168,75,.12);
+  border-color:rgba(200,168,75,.3);
+  color:var(--gold-lt);
+}
+.filter-btn .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:currentColor;flex-shrink:0;
+}
+.filter-clear{
+  font-size:12px;color:var(--muted2);
+  background:none;border:none;cursor:pointer;
+  padding:4px 8px;
+  transition:color .15s;
+  display:none;
+}
+.filter-clear:hover{color:var(--text)}
+.filter-clear.visible{display:inline-flex;align-items:center;gap:4px}
 </style>
 @endpush
 
 @section('content')
-    <div class="page-head">
-        <div>
-            <h1>Artefacts</h1>
-            <p>Gérez les fiches, les traductions et les images QR à imprimer pour le musée.</p>
-        </div>
-        <div class="toolbar">
-            <div class="search-wrap">
-                <input type="search" id="artifactSearch" placeholder="Rechercher…" autocomplete="off" aria-label="Filtrer la liste">
+
+{{-- ── Page header ─────────────────────────── --}}
+<div class="page-head">
+  <div class="page-head-left">
+    <h1>Artefacts <span class="count-badge">{{ $artifacts->total() }}</span></h1>
+    <p>Gérez les fiches, les traductions et les codes QR à imprimer sur les vitrines.</p>
+  </div>
+  <div class="page-head-right">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" id="searchInput" type="search"
+             placeholder="Rechercher…" autocomplete="off" aria-label="Filtrer les artefacts"/>
+    </div>
+    <a class="btn btn-primary" href="{{ route('admin.artifacts.create') }}">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Nouvel artefact
+    </a>
+  </div>
+</div>
+
+{{-- ── Category filter bar ─────────────────── --}}
+<div class="filter-bar" id="filterBar">
+  <button class="filter-btn active" data-filter="all" onclick="applyFilter(this,'all')">
+    <span class="dot" style="background:var(--gold)"></span>Tous
+  </button>
+  @foreach($categories ?? [] as $cat)
+  <button class="filter-btn" data-filter="{{ $cat->id }}" onclick="applyFilter(this,'{{ $cat->id }}')">
+    <span class="dot"></span>{{ $cat->name }}
+  </button>
+  @endforeach
+  <button class="filter-clear" id="filterClear" onclick="clearFilter()">
+    <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    Effacer
+  </button>
+</div>
+
+{{-- ── Desktop table ───────────────────────── --}}
+<div class="card table-card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:46px">#</th>
+          <th>Nom</th>
+          <th>Code QR</th>
+          <th style="width:80px">Image QR</th>
+          <th>Catégorie</th>
+          <th style="width:80px;text-align:center">Étage</th>
+          <th style="width:60px">3D</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        @forelse($artifacts as $artifact)
+        <tr
+          data-search="{{ strtolower($artifact->name.' '.$artifact->qr_code.' '.($artifact->category?->name ?? '')) }}"
+          data-cat="{{ $artifact->category_id }}">
+          <td style="color:var(--muted2);font-size:12px">{{ $artifact->id }}</td>
+          <td>
+            <span style="font-weight:500">{{ $artifact->name }}</span>
+            @if($artifact->has_3d_model)
+              <span class="badge-3d" style="margin-left:6px;font-size:9px;padding:2px 7px">3D</span>
+            @endif
+          </td>
+          <td class="mono">{{ $artifact->qr_code }}</td>
+          <td>
+            @if($artifact->qr_image_path)
+              <a href="{{ asset('storage/'.$artifact->qr_image_path) }}" target="_blank" rel="noopener">
+                <img class="qr-thumb" src="{{ asset('storage/'.$artifact->qr_image_path) }}" alt="QR {{ $artifact->name }}"/>
+              </a>
+            @else
+              <span style="color:var(--muted2);font-size:12px">—</span>
+            @endif
+          </td>
+          <td>
+            @if($artifact->category)
+              <span class="chip">{{ $artifact->category->name }}</span>
+            @else
+              <span style="color:var(--muted2)">—</span>
+            @endif
+          </td>
+          <td style="text-align:center">
+            <span class="floor-badge">{{ $artifact->floor }}</span>
+          </td>
+          <td>
+            @if($artifact->has_3d_model)
+              <span style="color:#c4b5fd;font-size:18px">✦</span>
+            @else
+              <span style="color:var(--muted2);font-size:13px">—</span>
+            @endif
+          </td>
+          <td>
+            <div class="actions">
+              <a class="btn btn-ghost btn-sm"
+                 href="{{ route('admin.artifacts.edit', $artifact) }}"
+                 title="Modifier">
+                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Modifier
+              </a>
+              <form method="POST" action="{{ route('admin.artifacts.destroy', $artifact) }}"
+                    onsubmit="return confirmDelete(event,'{{ addslashes($artifact->name) }}')">
+                @csrf @method('DELETE')
+                <button class="btn btn-danger btn-sm" type="submit" title="Supprimer">
+                  <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                  Suppr.
+                </button>
+              </form>
             </div>
-            <a class="btn btn-primary" href="{{ route('admin.artifacts.create') }}">+ Nouvel artefact</a>
-        </div>
-    </div>
+          </td>
+        </tr>
+        @empty
+        <tr>
+          <td colspan="8" class="td-empty">
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+              <h3>Aucun artefact</h3>
+              <p>Commencez par créer le premier artefact du musée.</p>
+            </div>
+          </td>
+        </tr>
+        @endforelse
+      </tbody>
+    </table>
+  </div>
+</div>
 
-    @if(session('success'))
-        <div class="flash">{{ session('success') }}</div>
+{{-- ── Mobile card view ────────────────────── --}}
+<div class="artifact-cards" id="mobileCards">
+  @forelse($artifacts as $artifact)
+  <div class="artifact-card"
+       data-search="{{ strtolower($artifact->name.' '.$artifact->qr_code.' '.($artifact->category?->name ?? '')) }}"
+       data-cat="{{ $artifact->category_id }}">
+    @if($artifact->qr_image_path)
+      <img class="artifact-card-qr" src="{{ asset('storage/'.$artifact->qr_image_path) }}" alt="QR"/>
+    @else
+      <div class="artifact-card-qr" style="display:flex;align-items:center;justify-content:center;background:rgba(200,168,75,.06)">
+        <svg width="24" height="24" viewBox="0 0 24 24" style="stroke:rgba(200,168,75,.25);fill:none;stroke-width:1">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+        </svg>
+      </div>
     @endif
-
-    <div class="table-card">
-        <div class="table-scroll">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>QR</th>
-                        <th>Image QR</th>
-                        <th>Catégorie</th>
-                        <th>Étage</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="artifactTableBody">
-                    @forelse($artifacts as $artifact)
-                        <tr data-search="{{ strtolower($artifact->name.' '.$artifact->qr_code.' '.($artifact->category?->name ?? '')) }}">
-                            <td>{{ $artifact->id }}</td>
-                            <td>{{ $artifact->name }}</td>
-                            <td class="mono">{{ $artifact->qr_code }}</td>
-                            <td>
-                                @if($artifact->qr_image_path)
-                                    <a href="{{ asset('storage/' . $artifact->qr_image_path) }}" target="_blank" rel="noopener">
-                                        <img class="qr-preview" src="{{ asset('storage/' . $artifact->qr_image_path) }}" alt="">
-                                    </a>
-                                @else
-                                    —
-                                @endif
-                            </td>
-                            <td><span class="chip">{{ $artifact->category?->name }}</span></td>
-                            <td>{{ $artifact->floor }}</td>
-                            <td>
-                                <div class="actions">
-                                    <a class="btn btn-ghost btn-sm" href="{{ route('admin.artifacts.edit', $artifact) }}">Modifier</a>
-                                    <form method="POST" action="{{ route('admin.artifacts.destroy', $artifact) }}" onsubmit="return confirm('Supprimer cet artefact ?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-danger btn-sm" type="submit">Supprimer</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px;">Aucun artefact.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <div class="artifact-card-body">
+      <div class="artifact-card-name">{{ $artifact->name }}</div>
+      <div class="artifact-card-meta">
+        @if($artifact->category)
+          <span class="chip" style="font-size:11px;padding:2px 8px">{{ $artifact->category->name }}</span>
+        @endif
+        <span>Étage {{ $artifact->floor }}</span>
+        @if($artifact->has_3d_model)
+          <span class="badge-3d" style="font-size:9px;padding:2px 7px">3D</span>
+        @endif
+      </div>
+      <div class="artifact-card-actions">
+        <a class="btn btn-ghost btn-sm" href="{{ route('admin.artifacts.edit',$artifact) }}">Modifier</a>
+        <form method="POST" action="{{ route('admin.artifacts.destroy',$artifact) }}"
+              onsubmit="return confirmDelete(event,'{{ addslashes($artifact->name) }}')">
+          @csrf @method('DELETE')
+          <button class="btn btn-danger btn-sm" type="submit">Supprimer</button>
+        </form>
+      </div>
     </div>
+  </div>
+  @empty
+  <div class="empty-state">
+    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    <h3>Aucun artefact</h3>
+    <p>Commencez par créer le premier artefact.</p>
+  </div>
+  @endforelse
+</div>
 
-    <div class="pagination-wrap">
-        {{ $artifacts->links() }}
+{{-- Pagination --}}
+<div class="pagination" style="margin-top:22px">
+  {{ $artifacts->links() }}
+</div>
+
+{{-- Delete confirm modal --}}
+<div id="deleteModal" style="display:none;position:fixed;inset:0;z-index:250;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
+  <div style="background:var(--panel);border:1px solid rgba(200,168,75,.2);border-radius:10px;max-width:380px;width:100%;padding:28px;animation:popIn .25s ease both">
+    <div style="width:44px;height:44px;border-radius:10px;background:rgba(176,42,42,.12);border:1px solid rgba(176,42,42,.25);display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+      <svg width="20" height="20" viewBox="0 0 24 24" style="stroke:#fca5a5;fill:none;stroke-width:1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
     </div>
+    <h3 style="font-family:var(--ff);font-size:20px;font-weight:300;font-style:italic;color:var(--ivory);margin-bottom:8px">Supprimer cet artefact ?</h3>
+    <p style="font-size:13.5px;color:var(--muted);margin-bottom:22px;line-height:1.6" id="deleteModalName">Cette action est irréversible.</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost btn-sm" onclick="closeDeleteModal()" type="button">Annuler</button>
+      <button class="btn btn-danger btn-sm" id="deleteConfirmBtn" type="button">Supprimer définitivement</button>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @push('scripts')
 <script>
-(function() {
-    var input = document.getElementById('artifactSearch');
-    var body = document.getElementById('artifactTableBody');
-    if (!input || !body) return;
-    input.addEventListener('input', function() {
-        var q = this.value.trim().toLowerCase();
-        body.querySelectorAll('tr[data-search]').forEach(function(row) {
-            var hay = row.getAttribute('data-search') || '';
-            row.classList.toggle('hidden', q !== '' && hay.indexOf(q) === -1);
-        });
-    });
-})();
+/* ── Search + filter ────────────────────────── */
+var FILTER_CAT = 'all';
+var SEARCH_Q   = '';
+
+function applyFilter(btn, cat) {
+  FILTER_CAT = cat;
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  var cl = document.getElementById('filterClear');
+  if (cat !== 'all') cl.classList.add('visible'); else cl.classList.remove('visible');
+  filterRows();
+}
+
+function clearFilter() {
+  FILTER_CAT = 'all';
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelector('[data-filter="all"]').classList.add('active');
+  document.getElementById('filterClear').classList.remove('visible');
+  filterRows();
+}
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  SEARCH_Q = this.value.trim().toLowerCase();
+  filterRows();
+});
+
+function filterRows() {
+  var allRows = document.querySelectorAll('#tableBody tr[data-search], #mobileCards [data-search]');
+  var shown = 0;
+  allRows.forEach(function(row) {
+    var hay = (row.getAttribute('data-search') || '').toLowerCase();
+    var cat = row.getAttribute('data-cat') || '';
+    var matchQ   = !SEARCH_Q || hay.indexOf(SEARCH_Q) !== -1;
+    var matchCat = FILTER_CAT === 'all' || cat === FILTER_CAT;
+    var vis = matchQ && matchCat;
+    row.style.display = vis ? '' : 'none';
+    if (vis) shown++;
+  });
+}
+
+/* ── Delete confirmation modal ──────────────── */
+var pendingForm = null;
+
+function confirmDelete(e, name) {
+  e.preventDefault();
+  pendingForm = e.target.closest('form');
+  document.getElementById('deleteModalName').textContent =
+    'L\'artefact "' + name + '" sera supprimé de façon permanente.';
+  var m = document.getElementById('deleteModal');
+  m.style.display = 'flex';
+  document.getElementById('deleteConfirmBtn').focus();
+  return false;
+}
+
+document.getElementById('deleteConfirmBtn').addEventListener('click', function() {
+  if (pendingForm) { pendingForm.submit(); }
+});
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').style.display = 'none';
+  pendingForm = null;
+}
+
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDeleteModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDeleteModal();
+});
+
+@keyframes popIn {
+  from { opacity:0; transform:scale(.94) translateY(12px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
 </script>
 @endpush

@@ -8,6 +8,15 @@ use Illuminate\Http\JsonResponse;
 
 class ArtifactLookupController extends Controller
 {
+    private function toPublicMediaUrl(string $path): string
+    {
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        return asset(ltrim($path, '/'));
+    }
+
     public function showByQr(string $qrCode): JsonResponse
     {
         $artifact = Artifact::with(['category', 'translations', 'media'])
@@ -25,6 +34,11 @@ class ArtifactLookupController extends Controller
             ->where('type', 'model_3d')
             ->sortByDesc('is_main')
             ->first();
+        $imageMedia = $artifact->media
+            ->where('type', 'image')
+            ->sortByDesc('is_main')
+            ->values();
+        $mainImage = $imageMedia->first();
 
         $mainTitle = optional($translations->get('fr'))->name
             ?? optional($translations->first())->name
@@ -39,6 +53,8 @@ class ArtifactLookupController extends Controller
             'qrCode' => $artifact->qr_code,
             'qrImage' => $artifact->qr_image_path ? asset('storage/' . $artifact->qr_image_path) : null,
             'modelSrc' => $modelMedia?->file_path ?? '',
+            'mainImage' => $mainImage ? $this->toPublicMediaUrl((string) $mainImage->file_path) : null,
+            'galleryImages' => $imageMedia->map(fn ($img) => $this->toPublicMediaUrl((string) $img->file_path))->all(),
             'category' => $artifact->category?->name ?? 'Collection du musee',
             'ref' => strtoupper($artifact->qr_code ?? ('artifact-' . $artifact->id)),
             'epoque' => 'Niveau ' . $artifact->floor,
@@ -62,6 +78,10 @@ class ArtifactLookupController extends Controller
             'zh' => [
                 'title' => optional($translations->get('zh'))->name ?? $mainTitle,
                 'desc' => optional($translations->get('zh'))->description ?? $mainDesc,
+            ],
+            'ru' => [
+                'title' => optional($translations->get('ru'))->name ?? $mainTitle,
+                'desc' => optional($translations->get('ru'))->description ?? $mainDesc,
             ],
         ]);
     }

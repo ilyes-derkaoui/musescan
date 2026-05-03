@@ -14,7 +14,7 @@ use Illuminate\View\View;
 
 class ArtifactController extends Controller
 {
-    private array $locales = ['ar', 'es', 'fr', 'en', 'zh'];
+    private array $locales = ['ar', 'es', 'fr', 'en', 'zh', 'ru'];
 
     public function index(): View
     {
@@ -134,4 +134,64 @@ class ArtifactController extends Controller
                 ->delete();
         }
     }
+
+    public function show(string $qr_code)
+{
+    $artifact = Artifact::where('qr_code', $qr_code)
+        ->with(['category', 'media', 'visits'])
+        ->firstOrFail();
+
+    // Traductions indexées par locale
+    $translations = $artifact->translations->keyBy('locale');
+
+    // Médias séparés par type
+    $images  = $artifact->media->where('type', 'image');
+    $audio   = $artifact->media->where('type', 'audio')->first();
+    $model3d = $artifact->media->where('type', 'model_3d')->first();
+
+    // Personnage lié (optionnel)
+    $figure          = $artifact->historicalFigure ?? null;
+    $figureArtifacts = $figure?->artifacts->where('id', '!=', $artifact->id);
+
+    // Feedbacks paginés
+    $feedbacks = $artifact->feedbacks()
+        ->latest()
+        ->paginate(5);
+
+    return view('artifacts.show', compact(
+        'artifact', 'translations', 'images',
+        'audio', 'model3d', 'figure',
+        'figureArtifacts', 'feedbacks'
+    ));
+}
+
+public function logVisit(string $qr_code)
+{
+    $artifact = Artifact::where('qr_code', $qr_code)->firstOrFail();
+    $artifact->visits()->create([
+        'ip_hash'    => hash('sha256', request()->ip()),
+        'scanned_at' => now(),
+    ]);
+    return response()->json(['ok' => true]);
+}
+
+public function storeFeedback(Request $request, string $qr_code)
+{
+    $artifact = Artifact::where('qr_code', $qr_code)->firstOrFail();
+
+    $request->validate([
+        'rating'  => 'required|integer|min:1|max:5',
+        'comment' => 'nullable|string|max:1000',
+    ]);
+
+    $artifact->feedbacks()->create([
+        'visitor_name' => $request->visitor_name,
+        'rating'       => $request->rating,
+        'comment'      => $request->comment,
+    ]);
+
+    return back()->with('feedback_success', true);
+}
+
+
 }

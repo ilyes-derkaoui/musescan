@@ -10,9 +10,20 @@ use Illuminate\View\View;
 
 class LoginController extends Controller
 {
+    private function isAdminEmail(?string $email): bool
+    {
+        $adminEmail = (string) config('app.admin_email', 'admin@museum.local');
+
+        return strtolower((string) $email) === strtolower($adminEmail);
+    }
+
     public function showLoginForm(): View|RedirectResponse
     {
         if (Auth::check()) {
+            if (! $this->isAdminEmail(Auth::user()?->email)) {
+                return redirect('/');
+            }
+
             return redirect()->route('admin.artifacts.index');
         }
 
@@ -28,6 +39,16 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            if (! $this->isAdminEmail(Auth::user()?->email)) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()
+                    ->withErrors(['email' => 'Accès admin uniquement.'])
+                    ->onlyInput('email');
+            }
 
             return redirect()->intended(route('admin.artifacts.index'));
         }
