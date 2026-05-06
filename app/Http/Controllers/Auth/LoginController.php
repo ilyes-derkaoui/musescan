@@ -24,7 +24,7 @@ class LoginController extends Controller
                 return redirect('/');
             }
 
-            return redirect()->route('admin.artifacts.index');
+            return redirect()->route('admin.dashboard');
         }
 
         return view('auth.login');
@@ -50,7 +50,7 @@ class LoginController extends Controller
                     ->onlyInput('email');
             }
 
-            return redirect()->intended(route('admin.artifacts.index'));
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         return back()

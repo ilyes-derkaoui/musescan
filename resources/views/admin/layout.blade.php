@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>@yield('title','Admin') — Musée</title>
+<title>@yield('title','Admin') — Musée Militaire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -143,14 +143,23 @@ body.sidebar-open .sidebar-overlay{pointer-events:auto}
 }
 .sb-logo-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .sb-emblem{
-  width:40px;height:40px;
+  width:44px;height:44px;
   border-radius:50%;
-  border:1px solid rgba(200,168,75,.3);
+  border:1px solid rgba(200,168,75,.38);
   display:flex;align-items:center;justify-content:center;
-  background:rgba(200,168,75,.06);
+  background:radial-gradient(circle at 35% 30%,rgba(200,168,75,.12),rgba(8,22,14,.92));
   flex-shrink:0;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.35) inset,
+    0 4px 14px rgba(0,0,0,.3),
+    0 0 22px rgba(200,168,75,.06);
 }
-.sb-emblem img{width:100%;height:100%;object-fit:contain;padding:5px}
+.sb-emblem img{
+  width:100%;height:100%;object-fit:cover;object-position:center;
+  padding:0;flex-shrink:0;
+  transform:scale(1.08);
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))
+}
 .sb-brand{
   font-family:var(--fc);
   font-size:10px;letter-spacing:.16em;text-transform:uppercase;
@@ -231,6 +240,53 @@ body.sidebar-open .sidebar-overlay{pointer-events:auto}
   color:var(--gold);
   flex-shrink:0;
 }
+
+/* ── Nav hiérarchie (groupe Artefacts) ───────── */
+.sb-nav-group{
+  margin:4px 0 14px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(200,168,75,.08);
+}
+.sb-group-title{
+  padding:8px 8px 10px;
+  font-family:var(--fc);
+  font-size:8.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:rgba(200,168,75,.32);
+}
+.sb-sublink{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 10px 9px 16px;
+  margin:0 0 3px 6px;
+  border-left:2px solid rgba(200,168,75,.12);
+  border-radius:0 7px 7px 0;
+  color:var(--muted);
+  text-decoration:none;
+  font-size:13px;
+  font-weight:500;
+  transition:background .15s,color .15s,border-color .15s;
+  position:relative;
+}
+.sb-sublink svg{
+  width:15px;height:15px;
+  stroke:currentColor;fill:none;stroke-width:1.5;
+  flex-shrink:0;opacity:.65;
+}
+.sb-sublink:hover{
+  background:var(--gold-hover);
+  color:var(--text);
+  border-left-color:rgba(200,168,75,.35);
+}
+.sb-sublink:hover svg{opacity:.9}
+.sb-sublink.active{
+  background:rgba(200,168,75,.11);
+  color:var(--gold-lt);
+  border-left-color:var(--gold);
+}
+.sb-sublink.active svg{opacity:1;stroke:var(--gold)}
 
 /* ── Sidebar Footer ─────────────────────────── */
 .sb-foot{
@@ -713,7 +769,7 @@ tbody tr:last-child td{border-bottom:none}
         <img src="{{ asset('images/anp.png') }}" alt="ANP" onerror="this.style.display='none'">
       </div>
       <div class="sb-brand">
-        Musée Militaire
+        Musée Militaire National
         <span>Administration</span>
       </div>
     </div>
@@ -721,12 +777,26 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 
   <nav class="sb-nav">
-    <span class="sb-section-label">Gestion</span>
-    <a href="{{ route('admin.artifacts.index') }}"
-       class="sb-link {{ request()->routeIs('admin.artifacts.*') ? 'active' : '' }}">
-      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      Artefacts
+    <span class="sb-section-label">Menu principal</span>
+    <a href="{{ route('admin.dashboard') }}"
+       class="sb-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-6 6-3-3-4 4"/><path d="M7 7h10v10H7z"/></svg>
+      Statistiques
     </a>
+
+    <div class="sb-nav-group">
+      <div class="sb-group-title">Artefacts</div>
+      <a href="{{ route('admin.artifacts.index') }}"
+         class="sb-sublink {{ request()->routeIs('admin.artifacts.*') ? 'active' : '' }}">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Fiches &amp; QR
+      </a>
+      <a href="{{ route('admin.feedbacks.index') }}"
+         class="sb-sublink {{ request()->routeIs('admin.feedbacks.*') ? 'active' : '' }}">
+        <svg viewBox="0 0 24 24"><path d="M12 17.75l-6.172 3.848 1.639-7.052L2 9.798l7.229-.596L12 2.75l2.771 6.452 7.229.596-5.467 4.948 1.639 7.052z"/></svg>
+        Avis visiteurs
+      </a>
+    </div>
 
     <span class="sb-section-label" style="margin-top:8px">Navigation</span>
     <a href="{{ url('/') }}" class="sb-link">

@@ -1566,10 +1566,40 @@
             background: rgba(200,168,75,0.08);
         }
 
+        /* Main split: viewer ~60% · description ~40% (LTR locks layout under Arabic UI) */
+        .art-main-split {
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+            gap: clamp(14px, 2.2vw, 24px);
+            align-items: stretch;
+            direction: ltr;
+            width: 100%;
+        }
+
+        .art-col-visual {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .art-col-desc {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            direction: ltr;
+        }
+
+        .art-col-desc .art-desc-panel {
+            flex: 1;
+            justify-content: flex-start;
+            min-height: min(320px, 42vh);
+        }
+
         /* 3D viewer (for non-figure artifacts) */
         .art-viewer {
-            min-height: clamp(280px, 46vh, 520px);
+            flex: 1;
             width: 100%;
+            min-height: min(62vh, 540px);
             position: relative;
             display: flex;
             align-items: center;
@@ -1740,11 +1770,20 @@
         .art-text.ltr-text { font-family: var(--ff); font-style: italic; direction: ltr; text-align: left; }
         .art-text.ru-text  { font-family: var(--ff); direction: ltr; text-align: left; }
 
-        .art-meta {
-            border: 1px solid rgba(200,168,75,0.1);
-            border-radius: 3px;
+        .art-meta-wrap {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid rgba(200,168,75,0.22);
             overflow: hidden;
-            background: rgba(200,168,75,0.03);
+            background: linear-gradient(180deg, rgba(10,26,14,0.65), rgba(7,14,9,0.85));
+            box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+        }
+
+        .art-meta {
+            border: none;
+            border-radius: 0;
+            overflow: hidden;
+            background: transparent;
         }
         .art-meta-row {
             display: flex;
@@ -1785,11 +1824,22 @@
             box-shadow: 0 10px 28px rgba(0,0,0,0.28);
         }
 
+        @media (max-width: 820px) {
+            .art-main-split {
+                grid-template-columns: 1fr;
+            }
+            .art-viewer {
+                min-height: min(44vh, 400px);
+            }
+            .art-col-desc .art-desc-panel {
+                min-height: 0;
+            }
+        }
+
         @media (max-width: 900px) {
             .art-body { padding: 12px 10px 18px; gap: 12px; }
             .art-head { padding: 12px 12px; }
             .art-date-line { font-size: 9px; letter-spacing: 0.12em; }
-            .art-viewer { min-height: 250px; }
             .art-desc-panel { padding: 14px 12px 12px; }
             .art-bar { padding: 0 14px; gap: 8px; }
             .art-back, .art-narrate { font-size: 10px; padding: 6px 10px; }
@@ -2156,37 +2206,45 @@
             <h2 class="art-title ar-text" id="artTitle">…</h2>
         </div>
 
-        {{-- 3D Viewer --}}
-        <div class="art-viewer">
-            <div class="art-image-stage" id="artImageStage" hidden>
-                <img id="artMainImage" class="art-main-image" src="" alt="Aperçu artefact">
-            </div>
-            <model-viewer
-                id="artModelViewer"
-                camera-controls
-                auto-rotate
-                ar
-                shadow-intensity="1"
-                style="width:100%;height:100%;background:transparent;"
-            ></model-viewer>
+        <div class="art-main-split">
+            <div class="art-col-visual">
+                {{-- 3D Viewer --}}
+                <div class="art-viewer">
+                    <div class="art-image-stage" id="artImageStage" hidden>
+                        <img id="artMainImage" class="art-main-image" src="" alt="Aperçu artefact">
+                    </div>
+                    <model-viewer
+                        id="artModelViewer"
+                        camera-controls
+                        auto-rotate
+                        ar
+                        shadow-intensity="1"
+                        style="width:100%;height:100%;background:transparent;"
+                    ></model-viewer>
 
-            {{-- Placeholder shown when no GLB is loaded --}}
-            <div class="art-3d-placeholder" id="art3dPlaceholder">
-                <div class="art-3d-icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                        <path d="M12 22V12M3.27 6.96 12 12l8.73-5.04"/>
-                    </svg>
+                    {{-- Placeholder shown when no GLB is loaded --}}
+                    <div class="art-3d-placeholder" id="art3dPlaceholder">
+                        <div class="art-3d-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <path d="M12 22V12M3.27 6.96 12 12l8.73-5.04"/>
+                            </svg>
+                        </div>
+                        <div class="art-3d-label">Modélisation 3D</div>
+                        <div class="art-3d-sub">نموذج ثلاثي الأبعاد</div>
+                    </div>
                 </div>
-                <div class="art-3d-label">Modélisation 3D</div>
-                <div class="art-3d-sub">نموذج ثلاثي الأبعاد</div>
+            </div>
+
+            <div class="art-col-desc">
+                {{-- Description (language via top bar pills) --}}
+                <div class="art-desc-panel">
+                    <p class="art-text ar-text" id="artDesc">…</p>
+                </div>
             </div>
         </div>
 
-        {{-- Description Panel --}}
-        <div class="art-desc-panel">
-            <p class="art-text ar-text" id="artDesc">…</p>
-
+        <div class="art-meta-wrap">
             <div class="art-meta" id="artMeta">
                 <div class="art-meta-row">
                     <span class="art-meta-key">Réf.</span>
@@ -2197,7 +2255,6 @@
                     <span class="art-meta-val" id="artSection">—</span>
                 </div>
             </div>
-
         </div>
 
         <div class="art-gallery-panel">
@@ -2211,6 +2268,8 @@
      JAVASCRIPT
 ──────────────────────────────────────────── --}}
 <script>
+/* Base lookup artefact — url() prend en charge sous-dossier / APP_URL */
+var ARTIFACT_LOOKUP_BASE = @json(rtrim(url('/api/artifacts/by-qr'), '/'));
 
 var SCROLL_Y = 0;
 
@@ -2435,16 +2494,47 @@ function qrStatusIdleMsg() {
     return dict.qr_status_idle || '…';
 }
 
+/** Données brutes d’un objet locale de l’API (sans chaînage fallback) */
+function normalizeArtifactBlock(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    var title = raw.title != null ? String(raw.title) : '';
+    var desc = raw.desc != null ? String(raw.desc) : '';
+    if (!desc.trim() && raw.description != null) desc = String(raw.description);
+    return { title: title, desc: desc };
+}
+
+/** Bloc { title, desc } pour affichage : langue choisie, sinon en → fr */
+function getArtifactLocale(lang) {
+    if (!CURRENT_ARTIFACT || !lang) return null;
+
+    var primary = normalizeArtifactBlock(CURRENT_ARTIFACT[lang]);
+    if (primary && (primary.title.trim() || primary.desc.trim())) return primary;
+
+    var order = lang === 'en' ? ['fr'] : ['en', 'fr', 'ar', 'es', 'zh', 'ru'];
+    var i;
+    for (i = 0; i < order.length; i++) {
+        if (order[i] === lang) continue;
+        var fb = normalizeArtifactBlock(CURRENT_ARTIFACT[order[i]]);
+        if (fb && (fb.title.trim() || fb.desc.trim())) return fb;
+    }
+    return primary || normalizeArtifactBlock(CURRENT_ARTIFACT.fr) || { title: '', desc: '' };
+}
+
+function localeHasContent(lang) {
+    var b = normalizeArtifactBlock(CURRENT_ARTIFACT ? CURRENT_ARTIFACT[lang] : null);
+    return !!(b && (b.title.trim() || b.desc.trim()));
+}
+
 function pickArtifactLangCode() {
     if (!CURRENT_ARTIFACT) return SITE_LANG || 'fr';
-    if (CURRENT_ARTIFACT[SITE_LANG]) return SITE_LANG;
+    if (localeHasContent(SITE_LANG)) return SITE_LANG;
     var order = ['fr', 'ar', 'en', 'es', 'zh', 'ru'];
     var i;
     for (i = 0; i < order.length; i++) {
         var c = order[i];
-        if (CURRENT_ARTIFACT[c]) return c;
+        if (localeHasContent(c)) return c;
     }
-    return 'en';
+    return 'fr';
 }
 
 function refreshMuseumMapForLang() {
@@ -2855,12 +2945,16 @@ async function openArtifact(qrVal) {
 
 async function fetchArtifactByQr(qrVal) {
     try {
-        var response = await fetch('/api/artifacts/by-qr/' + encodeURIComponent(qrVal), {
-            headers: { 'Accept': 'application/json' }
+        var url = ARTIFACT_LOOKUP_BASE + '/' + encodeURIComponent(qrVal);
+        var response = await fetch(url, {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'same-origin'
         });
 
         if (!response.ok) return ARTIFACT_FALLBACK;
-        return await response.json();
+        var data = await response.json();
+        if (!data || typeof data !== 'object') return ARTIFACT_FALLBACK;
+        return data;
     } catch (e) {
         return ARTIFACT_FALLBACK;
     }
@@ -2923,21 +3017,30 @@ function setLang(lang) {
 }
 
 function _applyLang(lang) {
-    var d        = CURRENT_ARTIFACT[lang] || CURRENT_ARTIFACT['en'];
-    var isAr     = (lang === 'ar');
-    var titleEl  = document.getElementById('artTitle');
-    var descEl   = document.getElementById('artDesc');
+    if (!CURRENT_ARTIFACT) return;
+    var d = getArtifactLocale(lang);
+    if (!d) {
+        d = getArtifactLocale('fr') || getArtifactLocale('en') || { title: '', desc: '' };
+    }
+    var isAr    = (lang === 'ar');
+    var titleEl = document.getElementById('artTitle');
+    var descEl  = document.getElementById('artDesc');
 
     titleEl.textContent = d.title;
     descEl.textContent  = d.desc;
 
-    /* Direction & font class */
-    titleEl.className = 'art-title ' + (isAr ? 'ar-text' : 'ltr-text');
-    descEl.className  = 'art-text '  + (isAr ? 'ar-text' : 'ltr-text');
+    var titleCls = 'art-title ';
+    var descCls  = 'art-text ';
+    if (lang === 'ar') { titleCls += 'ar-text'; descCls += 'ar-text'; }
+    else if (lang === 'zh') { titleCls += 'ltr-text'; descCls += 'ltr-text'; }
+    else if (lang === 'ru') { titleCls += 'ru-text'; descCls += 'ru-text'; }
+    else { titleCls += 'ltr-text'; descCls += 'ltr-text'; }
 
-    /* Highlight active lang button */
-    document.querySelectorAll('.lang-btn').forEach(function(btn) {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
+    titleEl.className = titleCls;
+    descEl.className  = descCls;
+
+    document.querySelectorAll('#artOverlay .lang-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
 }
 
@@ -2955,28 +3058,87 @@ function toggleNarrate() {
     if (NARRATING) { stopNarration(); } else { startNarration(); }
 }
 
+function pickVoiceForLang(langKey, utterance, langBcp47) {
+    utterance.lang = langBcp47;
+    utterance.voice = null;
+    var voices = window.speechSynthesis.getVoices();
+    if (!voices || !voices.length) return;
+
+    var want = LANG_BCP47[langKey] || langBcp47;
+    var pref = want.split('-')[0].toLowerCase();
+    var v;
+    for (var i = 0; i < voices.length; i++) {
+        var L = String(voices[i].lang || '').toLowerCase().replace('_', '-');
+        if (L.indexOf(pref) === 0) {
+            v = voices[i]; break;
+        }
+    }
+    if (!v) {
+        var code = LANG_BCP47[langKey] || '';
+        for (var j = 0; j < voices.length; j++) {
+            var L2 = String(voices[j].lang || '').toLowerCase();
+            if (code && L2.indexOf(code.toLowerCase()) === 0) { v = voices[j]; break; }
+        }
+    }
+    if (v) {
+        utterance.voice = v;
+        utterance.lang  = v.lang || utterance.lang;
+    }
+}
+
 function startNarration() {
     if (!window.speechSynthesis || !CURRENT_ARTIFACT) return;
-    var d    = CURRENT_ARTIFACT[CURRENT_LANG] || CURRENT_ARTIFACT['en'];
-    var text = d.title + '. ' + d.desc;
-    var utt  = new SpeechSynthesisUtterance(text);
-    utt.lang = LANG_BCP47[CURRENT_LANG] || 'fr-FR';
+
+    var bundle = getArtifactLocale(CURRENT_LANG) || getArtifactLocale('fr') || getArtifactLocale('en');
+    if (!bundle) return;
+    var text = (String(bundle.title).trim() + '. ' + String(bundle.desc).trim()).trim();
+    if (!text) return;
+
+    var langFallback = LANG_BCP47[CURRENT_LANG] || 'fr-FR';
+    window.speechSynthesis.cancel();
+
+    var utt = new SpeechSynthesisUtterance(text);
     utt.rate = 0.92;
 
     utt.onend = utt.onerror = function() {
         NARRATING = false;
         var nb = document.getElementById('narrateBtn');
-        nb.classList.remove('speaking');
-        document.getElementById('narrateBtnTxt').textContent = 'Narration';
+        if (nb) nb.classList.remove('speaking');
+        var t = document.getElementById('narrateBtnTxt');
+        if (t) t.textContent = 'Narration';
     };
 
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utt);
-    NARRATING = true;
+    var spoke = false;
 
-    var nb = document.getElementById('narrateBtn');
-    nb.classList.add('speaking');
-    document.getElementById('narrateBtnTxt').textContent = 'Arrêter ■';
+    function doSpeak() {
+        if (spoke) return;
+        spoke = true;
+        pickVoiceForLang(CURRENT_LANG, utt, langFallback);
+        try {
+            window.speechSynthesis.speak(utt);
+        } catch (err) { /* anciens navigateurs */ }
+        NARRATING = true;
+        var nb = document.getElementById('narrateBtn');
+        if (nb) nb.classList.add('speaking');
+        var t = document.getElementById('narrateBtnTxt');
+        if (t) t.textContent = 'Arrêter ■';
+    }
+
+    if (window.speechSynthesis.getVoices().length) {
+        doSpeak();
+    } else {
+        window.speechSynthesis.addEventListener(
+            'voiceschanged',
+            function onVoices() {
+                window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
+                doSpeak();
+            }
+        );
+        window.setTimeout(doSpeak, 450);
+        try {
+            window.speechSynthesis.getVoices();
+        } catch (e2) { /* noop */ }
+    }
 }
 
 function stopNarration() {

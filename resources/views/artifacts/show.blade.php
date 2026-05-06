@@ -66,7 +66,7 @@ html{scroll-behavior:smooth;height:100%}
   --fu:'Source Sans 3',system-ui,sans-serif;
   --fa:'Amiri','Traditional Arabic',serif;
   --hdr-h:64px;
-  --max:1100px;
+  --max:1180px;
 }
 
 body{
@@ -92,22 +92,31 @@ body{
   gap:12px;
 }
 
-.hdr-left{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.hdr-left{display:flex;align-items:center;gap:14px;flex-shrink:0;min-width:0}
 .hdr-emblem{
-  width:38px;height:38px;border-radius:50%;
-  border:1px solid rgba(200,168,75,.3);
-  overflow:hidden;background:rgba(200,168,75,.06);
+  width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(200,168,75,.38);
+  overflow:hidden;
+  background:radial-gradient(circle at 35% 30%,rgba(200,168,75,.12),rgba(8,22,14,.9));
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.4) inset,
+    0 4px 14px rgba(0,0,0,.35),
+    0 0 24px rgba(200,168,75,.06);
 }
-.hdr-emblem img{width:100%;height:100%;object-fit:contain;padding:4px}
+.hdr-emblem img{
+  width:100%;height:100%;object-fit:cover;object-position:center;padding:0;
+  transform:scale(1.08);filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))
+}
 .hdr-title{
   font-family:var(--fc);
-  font-size:clamp(9px,1.1vw,11px);
+  font-size:clamp(9.5px,1.15vw,11.5px);
   letter-spacing:.14em;text-transform:uppercase;
-  color:var(--gold);line-height:1.3;
+  color:var(--gold);line-height:1.35;
+  min-width:0;
 }
-.hdr-title span{display:block;color:rgba(200,168,75,.4);font-size:.85em;margin-top:1px}
+.hdr-title span{display:block;color:rgba(200,168,75,.42);font-size:.82em;margin-top:2px;letter-spacing:.12em}
 
 .hdr-right{display:flex;align-items:center;gap:10px}
 
@@ -493,12 +502,178 @@ body{
 ════════════════════════════════════════════ */
 .content-grid{
   display:grid;
-  grid-template-columns:1fr 320px;
-  gap:32px;
+  grid-template-columns:1fr minmax(260px,300px);
+  gap:clamp(22px,3vw,36px);
   align-items:start;
 }
 @media(max-width:900px){
   .content-grid{grid-template-columns:1fr}
+}
+.content-main-col{min-width:0}
+
+/* ════════════════════════════════════════════
+   PREVIEW STUDIO — visuel 60% · texte 40%
+   direction:ltr garde le 3D à gauche en arabe
+════════════════════════════════════════════ */
+.preview-studio{
+  direction:ltr;
+  display:grid;
+  grid-template-columns:minmax(0,3fr) minmax(0,2fr);
+  gap:clamp(20px,2.8vw,34px);
+  align-items:stretch;
+  margin-bottom:52px;
+}
+@media(max-width:960px){
+  .preview-studio{
+    grid-template-columns:1fr;
+    margin-bottom:40px;
+  }
+}
+
+.studio-visual{
+  position:relative;
+  min-height:min(72vh,580px);
+  border-radius:16px;
+  overflow:hidden;
+  background:linear-gradient(145deg,rgba(13,28,15,.96) 0%,rgba(7,14,8,1) 50%,rgba(9,18,11,1) 100%);
+  border:1px solid rgba(200,168,75,.2);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.4) inset,
+    0 28px 64px rgba(0,0,0,.48),
+    0 0 100px rgba(200,168,75,.05);
+}
+@media(max-width:960px){
+  .studio-visual{min-height:min(48vh,400px);}
+}
+
+.studio-visual::after{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 75% 55% at 50% 42%,rgba(200,168,75,.07),transparent 62%);
+  pointer-events:none;
+  z-index:2;
+}
+
+.studio-visual-inner{
+  position:absolute;
+  inset:0;
+  z-index:0;
+}
+
+.studio-model-wrap{
+  position:absolute!important;
+  inset:0!important;
+  height:100%!important;
+  min-height:0!important;
+  border-radius:0!important;
+  border:none!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.studio-model-wrap model-viewer{min-height:100%!important}
+
+.studio-photo-wrap{
+  position:absolute;inset:0;
+  cursor:pointer;
+  outline:none;
+}
+.studio-photo-wrap:focus-visible{
+  box-shadow:0 0 0 2px rgba(200,168,75,.55) inset;
+}
+.studio-photo-wrap img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+  filter:brightness(.86) saturate(.9) contrast(1.02);
+  transition:transform .65s cubic-bezier(.25,.46,.45,.94),filter .4s;
+}
+.studio-photo-wrap:hover img{
+  transform:scale(1.04);
+  filter:brightness(.93) saturate(1) contrast(1.02);
+}
+.studio-photo-wrap .gallery-zoom{
+  opacity:.85;
+  transform:scale(1);
+  pointer-events:none;
+}
+
+.studio-preview-badge{
+  position:absolute;top:16px;left:16px;z-index:5;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:999px;
+  background:rgba(200,168,75,.12);
+  border:1px solid rgba(200,168,75,.32);
+  font-family:var(--fc);font-size:9px;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold-lt);
+  backdrop-filter:blur(8px);
+}
+.studio-preview-badge::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--gold);
+  opacity:.85;
+}
+
+.studio-placeholder{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  color:var(--muted);
+  z-index:0;
+  background:radial-gradient(circle at 50% 50%,rgba(200,168,75,.04),transparent 55%);
+}
+.studio-placeholder svg{width:52px;height:52px;stroke:rgba(200,168,75,.18);fill:none;stroke-width:1}
+.studio-placeholder span{font-family:var(--fc);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,168,75,.35)}
+
+.studio-visual-foot{
+  position:absolute;bottom:0;left:0;right:0;z-index:6;
+  padding:16px 18px 18px;
+  background:linear-gradient(to top,rgba(7,14,8,.94) 0%,rgba(7,14,8,.5) 45%,transparent 100%);
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.studio-visual-hint{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 16px;border-radius:999px;
+  background:rgba(7,14,8,.78);
+  border:1px solid rgba(200,168,75,.22);
+  font-size:11px;color:var(--muted);
+  backdrop-filter:blur(10px);
+  max-width:95%;
+  text-align:center;
+  line-height:1.35;
+}
+.studio-visual-hint svg{width:12px;height:12px;stroke:var(--gold);fill:none;stroke-width:1.5;flex-shrink:0}
+
+.studio-model-wrap .model-badge{z-index:5}
+.studio-model-wrap .model-hint{display:none}
+
+.studio-copy{display:flex;flex-direction:column;min-width:0}
+.studio-copy-card{
+  flex:1;
+  display:flex;flex-direction:column;
+  direction:ltr;
+  min-height:min(72vh,580px);
+  padding:clamp(22px,2.8vw,34px);
+  border-radius:16px;
+  background:linear-gradient(168deg,rgba(14,32,18,.5) 0%,rgba(8,18,11,.72) 55%,rgba(7,14,8,.88) 100%);
+  border:1px solid rgba(200,168,75,.15);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.25) inset,
+    0 20px 50px rgba(0,0,0,.3);
+}
+@media(max-width:960px){
+  .studio-copy-card{min-height:0;}
+}
+.studio-copy-card .section-label{margin-bottom:16px}
+.studio-copy-card .desc-section{margin-bottom:0}
+.studio-copy-card .desc-text{font-size:clamp(15px,1.5vw,18px);line-height:1.85}
+.studio-copy-card .audio-section{
+  margin-top:auto;
+  margin-bottom:0;
+  padding-top:clamp(18px,2.5vw,26px);
+  border-top:1px solid rgba(200,168,75,.1);
+  background:linear-gradient(135deg,rgba(200,168,75,.06),rgba(200,168,75,.02));
 }
 
 /* ════════════════════════════════════════════
@@ -1143,105 +1318,132 @@ model-viewer{
   {{-- ── CONTENT GRID ──────────────────── --}}
   <div class="content-grid">
 
-    {{-- LEFT : Description + audio + 3D + figure ── --}}
-    <div>
+    {{-- Colonne principale : aperçu 60/40 + figurine + avis ── --}}
+    <div class="content-main-col">
 
-      {{-- ── AUDIO PLAYER ─────────────────── --}}
-      @if($audio)
-      <div class="audio-section reveal">
-        <div class="audio-header">
-          <div class="audio-title">
-            <svg width="13" height="13" viewBox="0 0 24 24" style="stroke:var(--gold);fill:none;stroke-width:1.5;flex-shrink:0">
-              <path d="M9 18V5l12-2v13"/>
-              <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-            </svg>
-            Narration audio
-            <span class="audio-lang-tag">EN</span>
-          </div>
-          <div class="audio-wave" id="audioWave">
-            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-          </div>
-        </div>
-        <div class="audio-bar">
-          <button class="audio-play" id="audioPlayBtn" onclick="toggleAudio()" type="button" aria-label="Lire la narration">
-            <svg class="play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
-            <svg class="pause-icon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg>
-          </button>
-          <div class="audio-progress-wrap">
-            <div class="audio-timeline" id="audioTimeline" onclick="seekAudio(event)">
-              <div class="audio-progress-bar" id="audioBar"></div>
+      <div class="preview-studio reveal reveal-delay-1">
+        <div class="studio-visual">
+          <div class="studio-visual-inner">
+            @if($model3d)
+            <div class="model-viewer-wrap studio-model-wrap">
+              <model-viewer
+                src="{{ asset('storage/'.$model3d->file_path) }}"
+                alt="{{ $artifact->name }}"
+                auto-rotate auto-rotate-delay="500"
+                camera-controls
+                shadow-intensity="1.2"
+                environment-image="neutral"
+                exposure="0.85"
+                tone-mapping="commerce"
+                style="width:100%;height:100%;">
+              </model-viewer>
+              <div class="model-badge">Modèle 3D interactif</div>
             </div>
-            <div class="audio-time">
-              <span id="audioCurrentTime">0:00</span>
-              <span id="audioDuration">—</span>
+            @elseif($images->isNotEmpty())
+            @php $studioImg = $images->first(); @endphp
+            <div class="studio-photo-wrap" onclick="openLightbox(0)" role="button" tabindex="0"
+                 aria-label="Ouvrir l’image en grand" onkeydown="if(event.key==='Enter')openLightbox(0)">
+              <img src="{{ asset('storage/'.$studioImg->file_path) }}"
+                   alt="{{ $artifact->name }} — aperçu"
+                   loading="eager"/>
+              <div class="gallery-zoom">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+              </div>
             </div>
-          </div>
-        </div>
-        <audio id="audioEl" preload="metadata" src="{{ asset('storage/'.$audio->file_path) }}"></audio>
-      </div>
-      @endif
-
-
-      {{-- ── DESCRIPTION ──────────────────── --}}
-      <div class="desc-section reveal reveal-delay-1">
-        <div class="section-label">Description historique</div>
-
-        {{-- French (default) --}}
-        @foreach(['fr','ar','en','es','zh','ru'] as $loc)
-        @if($translation = ($translations[$loc] ?? null))
-        <div id="desc-{{ $loc }}" class="{{ $loc !== 'fr' ? 'lang-block' : '' }}"
-             data-locale="{{ $loc }}"
-             style="{{ $loc !== 'fr' ? 'display:none' : '' }}">
-          <div class="desc-wrap {{ strlen($translation->description) > 600 ? 'collapsed' : '' }}"
-               id="descWrap-{{ $loc }}">
-            <p class="desc-text {{ $loc === 'ar' ? 'rtl' : '' }}">
-              {!! nl2br(e($translation->description)) !!}
-            </p>
-            @if(strlen($translation->description) > 600)
-            <div class="desc-fade"></div>
+            <div class="studio-preview-badge">Aperçu</div>
+            @else
+            <div class="studio-placeholder">
+              <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 17l-5-5-5 5M2 22h20"/></svg>
+              <span>Visuel non disponible</span>
+            </div>
             @endif
           </div>
-          @if(strlen($translation->description) > 600)
-          <button class="desc-toggle" id="toggle-{{ $loc }}" onclick="toggleDesc('{{ $loc }}')" type="button">
-            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            Lire la suite
-          </button>
-          @endif
+          <div class="studio-visual-foot">
+            <div class="studio-visual-hint">
+              @if($model3d)
+              <svg viewBox="0 0 24 24"><path d="M8 3l4 8 5-5 1 10-7-3-4 4-2-8 3-6z"/></svg>
+              Faites pivoter du doigt ou à la souris · molette pour zoomer
+              @elseif($images->isNotEmpty())
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Touchez l’image pour agrandir la galerie
+              @else
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Ajoutez des photos ou un modèle 3D depuis l’administration
+              @endif
+            </div>
+          </div>
         </div>
-        @endif
-        @endforeach
 
-        {{-- Fallback if no translation --}}
-        @if($translations->isEmpty())
-        <p class="desc-text" style="color:var(--muted)">Aucune description disponible pour cet artefact.</p>
-        @endif
-      </div>
+        <div class="studio-copy">
+          <div class="studio-copy-card">
+            <div class="section-label">Description · langue sélectionnée</div>
 
+            <div class="desc-section">
+              @foreach(['fr','ar','en','es','zh','ru'] as $loc)
+              @if($translation = ($translations[$loc] ?? null))
+              <div id="desc-{{ $loc }}" class="{{ $loc !== 'fr' ? 'lang-block' : '' }}"
+                   data-locale="{{ $loc }}"
+                   style="{{ $loc !== 'fr' ? 'display:none' : '' }}">
+                <div class="desc-wrap {{ strlen($translation->description) > 520 ? 'collapsed' : '' }}"
+                     id="descWrap-{{ $loc }}">
+                  <p class="desc-text {{ $loc === 'ar' ? 'rtl' : '' }}">
+                    {!! nl2br(e($translation->description)) !!}
+                  </p>
+                  @if(strlen($translation->description) > 520)
+                  <div class="desc-fade"></div>
+                  @endif
+                </div>
+                @if(strlen($translation->description) > 520)
+                <button class="desc-toggle" id="toggle-{{ $loc }}" onclick="toggleDesc('{{ $loc }}')" type="button">
+                  <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                  Lire la suite
+                </button>
+                @endif
+              </div>
+              @endif
+              @endforeach
 
-      {{-- ── 3D MODEL ──────────────────────── --}}
-      @if($model3d)
-      <div class="model-section reveal reveal-delay-2">
-        <div class="section-label">Modèle 3D interactif</div>
-        <div class="model-viewer-wrap">
-          <model-viewer
-            src="{{ asset('storage/'.$model3d->file_path) }}"
-            alt="{{ $artifact->name }}"
-            auto-rotate auto-rotate-delay="500"
-            camera-controls
-            shadow-intensity="1.2"
-            environment-image="neutral"
-            exposure="0.85"
-            tone-mapping="commerce"
-            style="width:100%;height:100%;">
-          </model-viewer>
-          <div class="model-badge">Modèle 3D interactif</div>
-          <div class="model-hint">
-            <svg viewBox="0 0 24 24"><path d="M8 3l4 8 5-5 1 10-7-3-4 4-2-8 3-6z"/></svg>
-            Faites pivoter avec votre doigt ou la souris
+              @if($translations->isEmpty())
+              <p class="desc-text" style="color:var(--muted)">Aucune description disponible pour cet artefact.</p>
+              @endif
+            </div>
+
+            @if($audio)
+            <div class="audio-section">
+              <div class="audio-header">
+                <div class="audio-title">
+                  <svg width="13" height="13" viewBox="0 0 24 24" style="stroke:var(--gold);fill:none;stroke-width:1.5;flex-shrink:0">
+                    <path d="M9 18V5l12-2v13"/>
+                    <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+                  </svg>
+                  Narration audio
+                  <span class="audio-lang-tag">EN</span>
+                </div>
+                <div class="audio-wave" id="audioWave">
+                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="audio-bar">
+                <button class="audio-play" id="audioPlayBtn" onclick="toggleAudio()" type="button" aria-label="Lire la narration">
+                  <svg class="play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+                  <svg class="pause-icon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg>
+                </button>
+                <div class="audio-progress-wrap">
+                  <div class="audio-timeline" id="audioTimeline" onclick="seekAudio(event)">
+                    <div class="audio-progress-bar" id="audioBar"></div>
+                  </div>
+                  <div class="audio-time">
+                    <span id="audioCurrentTime">0:00</span>
+                    <span id="audioDuration">—</span>
+                  </div>
+                </div>
+              </div>
+              <audio id="audioEl" preload="metadata" src="{{ asset('storage/'.$audio->file_path) }}"></audio>
+            </div>
+            @endif
           </div>
         </div>
       </div>
-      @endif
 
 
       {{-- ── HISTORICAL FIGURE ──────────────── --}}
@@ -1370,7 +1572,7 @@ model-viewer{
         </div>
       </div>
 
-    </div>{{-- /left --}}
+    </div>{{-- /content-main-col --}}
 
 
     {{-- RIGHT : Sidebar ─────────────────── --}}

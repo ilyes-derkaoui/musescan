@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
+use App\Models\QrScan;
+use App\Models\ArtifactMedia;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Model;
 
 class Artifact extends Model
 {
@@ -46,4 +48,24 @@ class Artifact extends Model
     {
         return $this->belongsToMany(HistoricalFigure::class, 'figure_artifacts', 'artifact_id', 'figure_id');
     }
+
+    public function visits(): HasMany
+    {
+        return $this->hasMany(Visit::class);
+    }
+
+    public function feedbacks(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
+    public function qrScans()
+    {
+    return $this->hasMany(QrScan::class);
+    }
+    public function images()
+    {
+        return $this->hasMany(ArtifactMedia::class);
+    }
 }
+
+

@@ -74,6 +74,11 @@
   to{background-position:-200% 0}
 }
 
+@keyframes popIn{
+  from{opacity:0;transform:scale(.94) translateY(12px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+
 /* ── Empty row ─────────────────── */
 .td-empty{text-align:center;padding:60px 24px!important}
 
@@ -110,6 +115,7 @@
 }
 .filter-clear:hover{color:var(--text)}
 .filter-clear.visible{display:inline-flex;align-items:center;gap:4px}
+
 </style>
 @endpush
 
@@ -122,6 +128,14 @@
     <p>Gérez les fiches, les traductions et les codes QR à imprimer sur les vitrines.</p>
   </div>
   <div class="page-head-right">
+    <a class="btn btn-ghost" href="{{ route('admin.dashboard') }}">
+      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-6 6-3-3-4 4"/></svg>
+      Statistiques
+    </a>
+    <a class="btn btn-ghost" href="{{ route('admin.feedbacks.index') }}">
+      <svg viewBox="0 0 24 24"><path d="M12 17.75l-6.172 3.848 1.639-7.052L2 9.798l7.229-.596L12 2.75l2.771 6.452 7.229.596-5.467 4.948 1.639 7.052z"/></svg>
+      Avis
+    </a>
     <div class="search-wrap">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input class="search-input" id="searchInput" type="search"
@@ -336,13 +350,15 @@ document.getElementById('searchInput').addEventListener('input', function() {
 });
 
 function filterRows() {
+  var fc = FILTER_CAT === 'all' ? 'all' : String(FILTER_CAT);
   var allRows = document.querySelectorAll('#tableBody tr[data-search], #mobileCards [data-search]');
   var shown = 0;
   allRows.forEach(function(row) {
     var hay = (row.getAttribute('data-search') || '').toLowerCase();
-    var cat = row.getAttribute('data-cat') || '';
+    var cat = row.getAttribute('data-cat');
+    cat = cat === null || cat === '' ? '' : String(cat);
     var matchQ   = !SEARCH_Q || hay.indexOf(SEARCH_Q) !== -1;
-    var matchCat = FILTER_CAT === 'all' || cat === FILTER_CAT;
+    var matchCat = fc === 'all' || cat === fc;
     var vis = matchQ && matchCat;
     row.style.display = vis ? '' : 'none';
     if (vis) shown++;
@@ -379,10 +395,5 @@ document.getElementById('deleteModal').addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeDeleteModal();
 });
-
-@keyframes popIn {
-  from { opacity:0; transform:scale(.94) translateY(12px); }
-  to   { opacity:1; transform:scale(1) translateY(0); }
-}
 </script>
 @endpush

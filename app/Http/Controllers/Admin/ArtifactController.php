@@ -19,13 +19,17 @@ class ArtifactController extends Controller
     public function index(): View
     {
         $artifacts = Artifact::with('category')->orderBy('id', 'desc')->paginate(10);
+        $categories = Category::orderBy('name')->get();
 
-        return view('admin.artifacts.index', compact('artifacts'));
+        return view('admin.artifacts.index', compact(
+            'artifacts',
+            'categories'
+        ));
     }
 
     public function create(): View
     {
-        $artifact = new Artifact();
+        $artifact = new Artifact;
         $categories = Category::orderBy('name')->get();
 
         return view('admin.artifacts.form', [
@@ -76,6 +80,22 @@ class ArtifactController extends Controller
         $this->saveTranslationsAndModel($artifact, $request);
 
         return redirect()->route('admin.artifacts.index')->with('success', 'Artifact updated.');
+    }
+
+    // ── E: Printable QR sheet ───────────────────────────────────────────────
+    // Returns a minimal HTML page (no layout, no nav) with all artifact QR
+    // codes in an A4 grid. The admin opens it, hits Ctrl+P and prints.
+    // Each card shows: QR image, artifact name, qr_code value, floor & category.
+    // The browser's print dialog handles page breaks automatically.
+    public function printQr(): \Illuminate\Http\Response
+    {
+        $artifacts = Artifact::with('category')
+            ->whereNotNull('qr_image_path')
+            ->orderBy('name')
+            ->get();
+
+        $html = view('admin.artifacts.print-qr', compact('artifacts'))->render();
+        return response($html)->header('Content-Type', 'text/html');
     }
 
     public function destroy(Artifact $artifact): RedirectResponse
@@ -136,62 +156,62 @@ class ArtifactController extends Controller
     }
 
     public function show(string $qr_code)
-{
-    $artifact = Artifact::where('qr_code', $qr_code)
-        ->with(['category', 'media', 'visits'])
-        ->firstOrFail();
+    {
+        $artifact = Artifact::where('qr_code', $qr_code)
+            ->with(['category', 'media'])
+            ->withCount('visits')
+            ->firstOrFail();
 
-    // Traductions indexées par locale
-    $translations = $artifact->translations->keyBy('locale');
+        // Traductions indexées par locale
+        $translations = $artifact->translations->keyBy('locale');
 
-    // Médias séparés par type
-    $images  = $artifact->media->where('type', 'image');
-    $audio   = $artifact->media->where('type', 'audio')->first();
-    $model3d = $artifact->media->where('type', 'model_3d')->first();
+        // Médias séparés par type
+        $images = $artifact->media->where('type', 'image');
+        $audio = $artifact->media->where('type', 'audio')->first();
+        $model3d = $artifact->media->where('type', 'model_3d')->first();
 
-    // Personnage lié (optionnel)
-    $figure          = $artifact->historicalFigure ?? null;
-    $figureArtifacts = $figure?->artifacts->where('id', '!=', $artifact->id);
+        // Personnage lié (optionnel)
+        $figure = $artifact->historicalFigure ?? null;
+        $figureArtifacts = $figure?->artifacts->where('id', '!=', $artifact->id);
 
-    // Feedbacks paginés
-    $feedbacks = $artifact->feedbacks()
-        ->latest()
-        ->paginate(5);
+        // Feedbacks paginés
+        $feedbacks = $artifact->feedbacks()
+            ->latest()
+            ->paginate(5);
 
-    return view('artifacts.show', compact(
-        'artifact', 'translations', 'images',
-        'audio', 'model3d', 'figure',
-        'figureArtifacts', 'feedbacks'
-    ));
-}
+        return view('artifacts.show', compact(
+            'artifact', 'translations', 'images',
+            'audio', 'model3d', 'figure',
+            'figureArtifacts', 'feedbacks'
+        ));
+    }
 
-public function logVisit(string $qr_code)
-{
-    $artifact = Artifact::where('qr_code', $qr_code)->firstOrFail();
-    $artifact->visits()->create([
-        'ip_hash'    => hash('sha256', request()->ip()),
-        'scanned_at' => now(),
-    ]);
-    return response()->json(['ok' => true]);
-}
+    public function logVisit(string $qr_code)
+    {
+        $artifact = Artifact::where('qr_code', $qr_code)->firstOrFail();
+        $artifact->visits()->create([
+            'ip_hash' => hash('sha256', request()->ip()),
+            'scanned_at' => now(),
+        ]);
 
-public function storeFeedback(Request $request, string $qr_code)
-{
-    $artifact = Artifact::where('qr_code', $qr_code)->firstOrFail();
+        return response()->json(['ok' => true]);
+    }
 
-    $request->validate([
-        'rating'  => 'required|integer|min:1|max:5',
-        'comment' => 'nullable|string|max:1000',
-    ]);
+    public function storeFeedback(Request $request, string $qr_code)
+    {
+        $artifact = Artifact::where('qr_code', $qr_code)->firstOrFail();
 
-    $artifact->feedbacks()->create([
-        'visitor_name' => $request->visitor_name,
-        'rating'       => $request->rating,
-        'comment'      => $request->comment,
-    ]);
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
 
-    return back()->with('feedback_success', true);
-}
+        $artifact->feedbacks()->create([
+            'visitor_name' => $request->visitor_name,
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+        ]);
 
-
+        return back()->with('feedback_success', true);
+    }
 }
